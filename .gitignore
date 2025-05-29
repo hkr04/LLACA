@@ -1,0 +1,7 @@
+*.so
+*.egg-info
+*__pycache__/
+*tmp/
+*build/
+*result/
+*DS_Store
