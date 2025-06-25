@@ -1,5 +1,5 @@
-#ifndef AC_GRAM_AUTOMATON_H
-#define AC_GRAM_AUTOMATON_H
+#ifndef TRIE_GRAM_AUTOMATON_H
+#define TRIE_GRAM_AUTOMATON_H
 
 #include <iostream>
 #include <fstream>
@@ -104,5 +104,5 @@ public:
 
 }
 
-#endif // AC_GRAM_AUTOMATON_H
+#endif // TRIE_GRAM_AUTOMATON_H
 

@@ -174,7 +174,7 @@ void Automaton::build() {
 
     for (size_t i = 1; i <= _node_count; i++) {
         size_t pre = t[i].pre;
-        while (pre != ROOT && t[pre].end_utf8 == 0) { // Path compression, point to the last valid utf-8 state
+        while (pre != ROOT && t[pre].end == 0) { // Path compression, point to the last end state
             pre = t[pre].pre;
         }
         t[i].pre = pre;
