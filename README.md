@@ -36,6 +36,8 @@ LLACA.cut(ac, text="武汉市长江大桥", delim="/") # '武汉市/长江/大�
 LLACA.cutf(ac, input_path="/path/to/raw/text", output_path="/path/to/segmented/output")
 ```
 
+**⚡ 10x Faster**: New C++ interface now available! Replace `cut` with `cut_cpp` for dramatically improved performance. Note: Simplified preprocessing in C++ version results in minor differences from Python implementation.
+
 ## 🌟 Get Inspiration from Large Language Models
 
 A more convenient API is on the way!

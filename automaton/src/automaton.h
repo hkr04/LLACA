@@ -100,6 +100,9 @@ public:
 
     // Load a dictionary file into the automaton
     void load_dict(const std::string& dict_path);
+
+    // Cut a text into words
+    std::vector<std::string> cut(const std::string& text);
 };
 
 }

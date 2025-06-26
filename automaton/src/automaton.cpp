@@ -375,4 +375,128 @@ void Automaton::reset(size_t new_state) {
     _cur_state = new_state;
 }
 
+std::vector<std::string> Automaton::cut(const std::string& text) {
+    if (text.empty()) {
+        return {};
+    }
+
+    size_t n = text.size();
+    auto min_prob = -get_node(0).log_prefix_sum;
+
+    std::vector<double> max_prob; // char
+    std::vector<int> utf8_start; // byte
+    std::vector<int> pre; // char
+
+    int i = 0, j = 0; // byte, char
+
+    auto pre_state = _cur_state;
+
+    _cur_state = ROOT;
+    
+    // TODO: Handle full-width numbers and alphabets
+    int num_start = -1, alpha_start = -1; // char, char
+    
+    while (i < n) {
+        uint8_t byte = static_cast<uint8_t>(text[i]);
+        size_t char_len = 0;
+        if ((byte & 0x80) == 0x00) {
+            // 1-byte ASCII: 0xxxxxxx
+            char_len = 1;
+        } else if ((byte & 0xE0) == 0xC0) {
+            // 2-byte: 110xxxxx 10xxxxxx
+            char_len = 2;
+        } else if ((byte & 0xF0) == 0xE0) {
+            // 3-byte: 1110xxxx 10xxxxxx 10xxxxxx
+            char_len = 3;
+        } else if ((byte & 0xF8) == 0xF0) {
+            // 4-byte: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+            char_len = 4;
+        } else {
+            _cur_state = pre_state; // Restore previous state
+            throw std::invalid_argument("Invalid UTF-8 string: " + text);
+        }
+
+        if (i + char_len > n) {
+            _cur_state = pre_state; // Restore previous state
+            throw std::invalid_argument("Invalid UTF-8 string: " + text);
+        }
+        
+        for (size_t k = 0; k < char_len; k++) {
+            trans_byte(static_cast<uint8_t>(text[i + k]));
+        }
+
+        max_prob.push_back(min_prob);
+        pre.push_back(j - 1);
+        utf8_start.push_back(i);
+
+        // Handle numbers
+        if (char_len == 1 && isdigit(text[i])) {
+            if (num_start == -1) { // First number
+                num_start = j;
+            } else { // Not the first number
+                // [0, num_start) [num_start, j) vs [0, j - 1) [j - 1, j)
+                // NOTE: min_prob is negative
+                if (max_prob[num_start - 1] + min_prob / 2 > max_prob.back() + min_prob) {
+                    max_prob.back() = max_prob[num_start - 1] + min_prob / 2;
+                    pre.back() = num_start - 1;
+                }
+            }
+        } else { // Clear num_start
+            num_start = -1;
+        }
+
+        // Handle alphabets
+        if (char_len == 1 && isalpha(text[i])) {
+            if (alpha_start == -1) { // First alpha
+                alpha_start = j;
+            } else { // Not the first alpha
+                // [0, alpha_start) [alpha_start, j) vs [0, j - 1) [j - 1, j)
+                // NOTE: min_prob is negative
+                if (max_prob[alpha_start - 1] + min_prob / 2 > max_prob.back() + min_prob) {
+                    max_prob.back() = max_prob[alpha_start - 1] + min_prob / 2;
+                    pre.back() = alpha_start - 1;
+                }
+            }
+        } else { // Clear alpha_start
+            alpha_start = -1;
+        }
+
+        auto borders = get_borders(_cur_state);
+
+        for (const auto& border : borders) {
+            if (border.end == 0) {
+                continue;
+            }
+            auto pre_node = get_node(border.pre);
+            auto len_border = border.length;
+            auto log_cnt_pre = pre_node.log_prefix_sum;
+            auto log_cnt_border = border.log_end;
+            auto prob = log_cnt_border - log_cnt_pre;
+            if (prob > max_prob.back()) {
+                max_prob.back() = prob;
+                pre.back() = j - len_border;
+            }
+        }
+
+        i += char_len, j++;
+    }
+
+    _cur_state = pre_state; // Restore previous state
+
+    utf8_start.push_back(n);
+
+    std::vector<std::string> words;
+
+    // Trace back to get the words
+    j--;
+    while (j >= 0) {
+        words.push_back(text.substr(utf8_start[pre[j] + 1], utf8_start[j + 1] - utf8_start[pre[j] + 1]));
+        j = pre[j];
+    }
+
+    std::reverse(words.begin(), words.end());
+
+    return words;
+}
+
 } // namespace automaton

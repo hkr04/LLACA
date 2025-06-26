@@ -1538,8 +1538,8 @@ static const char* const __pyx_f[] = {
 /*--- Type declarations ---*/
 struct __pyx_obj_9Automaton_Automaton;
 
-/* "automaton.pyx":41
- *         void load_dict(string dict_path) except +
+/* "automaton.pyx":42
+ *         vector[string] cut(string text) except +
  * 
  * cdef class Automaton:             # <<<<<<<<<<<<<<
  *     cdef AutomatonImpl* autom
@@ -1928,6 +1928,27 @@ static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
 }
 #else
 #define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
+#endif
+
+/* ListCompAppend.proto */
+#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
+static CYTHON_INLINE int __Pyx_ListComp_Append(PyObject* list, PyObject* x) {
+    PyListObject* L = (PyListObject*) list;
+    Py_ssize_t len = Py_SIZE(list);
+    if (likely(L->allocated > len)) {
+        Py_INCREF(x);
+        #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030d0000
+        L->ob_item[len] = x;
+        #else
+        PyList_SET_ITEM(list, len, x);
+        #endif
+        __Pyx_SET_SIZE(list, len + 1);
+        return 0;
+    }
+    return PyList_Append(list, x);
+}
+#else
+#define __Pyx_ListComp_Append(L,x) PyList_Append(L,x)
 #endif
 
 /* RaiseException.proto */
@@ -2368,6 +2389,7 @@ static const char __pyx_k_s[] = "s";
 static const char __pyx_k__2[] = "?";
 static const char __pyx_k_gc[] = "gc";
 static const char __pyx_k_id[] = "id";
+static const char __pyx_k_cut[] = "cut";
 static const char __pyx_k_end[] = "end";
 static const char __pyx_k_int[] = "int";
 static const char __pyx_k_pop[] = "pop";
@@ -2384,9 +2406,13 @@ static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_node[] = "node";
 static const char __pyx_k_self[] = "self";
 static const char __pyx_k_test[] = "__test__";
+static const char __pyx_k_text[] = "text";
+static const char __pyx_k_word[] = "word";
 static const char __pyx_k_build[] = "build";
 static const char __pyx_k_q_F_a[] = "\320\004\037\230q\330\010!\240\021\240'\250\021\330\010\014\210F\220'\230\021\230,\240a";
 static const char __pyx_k_reset[] = "reset";
+static const char __pyx_k_utf_8[] = "utf-8";
+static const char __pyx_k_words[] = "words";
 static const char __pyx_k_A_t6_A[] = "\320\004\034\230A\330\010\017\210t\2206\230\033\240A";
 static const char __pyx_k_enable[] = "enable";
 static const char __pyx_k_encode[] = "encode";
@@ -2409,6 +2435,7 @@ static const char __pyx_k_set_name[] = "__set_name__";
 static const char __pyx_k_setstate[] = "__setstate__";
 static const char __pyx_k_Automaton[] = "Automaton";
 static const char __pyx_k_TypeError[] = "TypeError";
+static const char __pyx_k_cpp_words[] = "cpp_words";
 static const char __pyx_k_dict_path[] = "dict_path";
 static const char __pyx_k_isenabled[] = "isenabled";
 static const char __pyx_k_load_dict[] = "load_dict";
@@ -2430,6 +2457,7 @@ static const char __pyx_k_get_keywords[] = "get_keywords";
 static const char __pyx_k_is_coroutine[] = "_is_coroutine";
 static const char __pyx_k_stringsource[] = "<stringsource>";
 static const char __pyx_k_trans_string[] = "trans_string";
+static const char __pyx_k_Automaton_cut[] = "Automaton.cut";
 static const char __pyx_k_automaton_pyx[] = "automaton.pyx";
 static const char __pyx_k_cpp_dict_path[] = "cpp_dict_path";
 static const char __pyx_k_q_Ql_Ql_Q_j_F[] = "\320\004\037\230q\330\010\013\210:\220Q\220l\240!\330\014\031\230\021\230!\340\010\013\210:\220Q\220l\240!\330\014\020\220\r\230Q\330\020\036\230j\250\001\250\031\260'\270\021\330\010\014\210F\220&\230\001\230\021";
@@ -2440,6 +2468,7 @@ static const char __pyx_k_Automaton_build[] = "Automaton.build";
 static const char __pyx_k_Automaton_reset[] = "Automaton.reset";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_Automaton_insert[] = "Automaton.insert";
+static const char __pyx_k_A_F_at7_1_WCt81_q[] = "\200A\330\010(\250\004\250F\260$\260a\260t\2707\300!\3001\330\010\020\220\001\220\024\220W\230C\230t\2408\2501\330\010\017\210q";
 static const char __pyx_k_Automaton_get_node[] = "Automaton.get_node";
 static const char __pyx_k_asyncio_coroutines[] = "asyncio.coroutines";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
@@ -2472,8 +2501,9 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_18get_keywords(struct __pyx_obj_
 static PyObject *__pyx_pf_9Automaton_9Automaton_20reset(struct __pyx_obj_9Automaton_Automaton *__pyx_v_self, PyObject *__pyx_v_new_state); /* proto */
 static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automaton_Automaton *__pyx_v_self, PyObject *__pyx_v_dict_paths); /* proto */
 static PyObject *__pyx_pf_9Automaton_9Automaton_24load_dict(struct __pyx_obj_9Automaton_Automaton *__pyx_v_self, PyObject *__pyx_v_dict_path); /* proto */
-static PyObject *__pyx_pf_9Automaton_9Automaton_26__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_9Automaton_Automaton *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_9Automaton_9Automaton_28__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_9Automaton_Automaton *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_pf_9Automaton_9Automaton_26cut(struct __pyx_obj_9Automaton_Automaton *__pyx_v_self, PyObject *__pyx_v_text); /* proto */
+static PyObject *__pyx_pf_9Automaton_9Automaton_28__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_9Automaton_Automaton *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_9Automaton_9Automaton_30__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_9Automaton_Automaton *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_tp_new_9Automaton_Automaton(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 /* #### Code section: late_includes ### */
 /* #### Code section: module_state ### */
@@ -2518,8 +2548,8 @@ typedef struct {
   __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_pop;
   PyObject *__pyx_k_;
   PyObject *__pyx_tuple[2];
-  PyObject *__pyx_codeobj_tab[13];
-  PyObject *__pyx_string_tab[84];
+  PyObject *__pyx_codeobj_tab[14];
+  PyObject *__pyx_string_tab[91];
   PyObject *__pyx_int_1;
 /* #### Code section: module_state_contents ### */
 /* CommonTypesMetaclass.module_state_decls */
@@ -2562,86 +2592,93 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_n_u_Automaton___reduce_cython __pyx_string_tab[1]
 #define __pyx_n_u_Automaton___setstate_cython __pyx_string_tab[2]
 #define __pyx_n_u_Automaton_build __pyx_string_tab[3]
-#define __pyx_n_u_Automaton_get_borders __pyx_string_tab[4]
-#define __pyx_n_u_Automaton_get_keyword __pyx_string_tab[5]
-#define __pyx_n_u_Automaton_get_keywords __pyx_string_tab[6]
-#define __pyx_n_u_Automaton_get_node __pyx_string_tab[7]
-#define __pyx_n_u_Automaton_insert __pyx_string_tab[8]
-#define __pyx_n_u_Automaton_load_dict __pyx_string_tab[9]
-#define __pyx_n_u_Automaton_reset __pyx_string_tab[10]
-#define __pyx_n_u_Automaton_trans_byte __pyx_string_tab[11]
-#define __pyx_n_u_Automaton_trans_string __pyx_string_tab[12]
-#define __pyx_n_u_Automaton_word_count __pyx_string_tab[13]
-#define __pyx_n_u_TypeError __pyx_string_tab[14]
-#define __pyx_kp_u__2 __pyx_string_tab[15]
-#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[16]
-#define __pyx_kp_u_automaton_pyx __pyx_string_tab[17]
-#define __pyx_n_u_borders __pyx_string_tab[18]
-#define __pyx_n_u_build __pyx_string_tab[19]
-#define __pyx_n_u_byte __pyx_string_tab[20]
-#define __pyx_n_u_cline_in_traceback __pyx_string_tab[21]
-#define __pyx_n_u_cpp_byte __pyx_string_tab[22]
-#define __pyx_n_u_cpp_dict_path __pyx_string_tab[23]
-#define __pyx_n_u_cpp_dict_paths __pyx_string_tab[24]
-#define __pyx_n_u_cpp_node_id __pyx_string_tab[25]
-#define __pyx_n_u_cpp_string __pyx_string_tab[26]
-#define __pyx_n_u_dict __pyx_string_tab[27]
-#define __pyx_n_u_dict_path __pyx_string_tab[28]
-#define __pyx_n_u_dict_paths __pyx_string_tab[29]
-#define __pyx_kp_u_disable __pyx_string_tab[30]
-#define __pyx_kp_u_enable __pyx_string_tab[31]
-#define __pyx_n_u_encode __pyx_string_tab[32]
-#define __pyx_n_u_end __pyx_string_tab[33]
-#define __pyx_n_u_fail __pyx_string_tab[34]
-#define __pyx_n_u_freq __pyx_string_tab[35]
-#define __pyx_n_u_func __pyx_string_tab[36]
-#define __pyx_kp_u_gc __pyx_string_tab[37]
-#define __pyx_n_u_get_borders __pyx_string_tab[38]
-#define __pyx_n_u_get_keyword __pyx_string_tab[39]
-#define __pyx_n_u_get_keywords __pyx_string_tab[40]
-#define __pyx_n_u_get_node __pyx_string_tab[41]
-#define __pyx_n_u_getstate __pyx_string_tab[42]
-#define __pyx_n_u_id __pyx_string_tab[43]
-#define __pyx_n_u_insert __pyx_string_tab[44]
-#define __pyx_n_u_int __pyx_string_tab[45]
-#define __pyx_n_u_is_coroutine __pyx_string_tab[46]
-#define __pyx_kp_u_isenabled __pyx_string_tab[47]
-#define __pyx_n_u_keyword __pyx_string_tab[48]
-#define __pyx_n_u_keywords __pyx_string_tab[49]
-#define __pyx_n_u_length __pyx_string_tab[50]
-#define __pyx_n_u_load_dict __pyx_string_tab[51]
-#define __pyx_n_u_log_end __pyx_string_tab[52]
-#define __pyx_n_u_log_prefix_sum __pyx_string_tab[53]
-#define __pyx_n_u_main __pyx_string_tab[54]
-#define __pyx_n_u_module __pyx_string_tab[55]
-#define __pyx_n_u_name __pyx_string_tab[56]
-#define __pyx_n_u_new_state __pyx_string_tab[57]
-#define __pyx_kp_u_no_default___reduce___due_to_non __pyx_string_tab[58]
-#define __pyx_n_u_node __pyx_string_tab[59]
-#define __pyx_n_u_node_dict __pyx_string_tab[60]
-#define __pyx_n_u_node_id __pyx_string_tab[61]
-#define __pyx_n_u_pop __pyx_string_tab[62]
-#define __pyx_n_u_pre __pyx_string_tab[63]
-#define __pyx_n_u_prefix_sum __pyx_string_tab[64]
-#define __pyx_n_u_pyx_state __pyx_string_tab[65]
-#define __pyx_n_u_qualname __pyx_string_tab[66]
-#define __pyx_n_u_reduce __pyx_string_tab[67]
-#define __pyx_n_u_reduce_cython __pyx_string_tab[68]
-#define __pyx_n_u_reduce_ex __pyx_string_tab[69]
-#define __pyx_n_u_res __pyx_string_tab[70]
-#define __pyx_n_u_reset __pyx_string_tab[71]
-#define __pyx_n_u_return __pyx_string_tab[72]
-#define __pyx_n_u_s __pyx_string_tab[73]
-#define __pyx_n_u_self __pyx_string_tab[74]
-#define __pyx_n_u_set_name __pyx_string_tab[75]
-#define __pyx_n_u_setstate __pyx_string_tab[76]
-#define __pyx_n_u_setstate_cython __pyx_string_tab[77]
-#define __pyx_n_u_str __pyx_string_tab[78]
-#define __pyx_kp_u_stringsource __pyx_string_tab[79]
-#define __pyx_n_u_test __pyx_string_tab[80]
-#define __pyx_n_u_trans_byte __pyx_string_tab[81]
-#define __pyx_n_u_trans_string __pyx_string_tab[82]
-#define __pyx_n_u_word_count __pyx_string_tab[83]
+#define __pyx_n_u_Automaton_cut __pyx_string_tab[4]
+#define __pyx_n_u_Automaton_get_borders __pyx_string_tab[5]
+#define __pyx_n_u_Automaton_get_keyword __pyx_string_tab[6]
+#define __pyx_n_u_Automaton_get_keywords __pyx_string_tab[7]
+#define __pyx_n_u_Automaton_get_node __pyx_string_tab[8]
+#define __pyx_n_u_Automaton_insert __pyx_string_tab[9]
+#define __pyx_n_u_Automaton_load_dict __pyx_string_tab[10]
+#define __pyx_n_u_Automaton_reset __pyx_string_tab[11]
+#define __pyx_n_u_Automaton_trans_byte __pyx_string_tab[12]
+#define __pyx_n_u_Automaton_trans_string __pyx_string_tab[13]
+#define __pyx_n_u_Automaton_word_count __pyx_string_tab[14]
+#define __pyx_n_u_TypeError __pyx_string_tab[15]
+#define __pyx_kp_u__2 __pyx_string_tab[16]
+#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[17]
+#define __pyx_kp_u_automaton_pyx __pyx_string_tab[18]
+#define __pyx_n_u_borders __pyx_string_tab[19]
+#define __pyx_n_u_build __pyx_string_tab[20]
+#define __pyx_n_u_byte __pyx_string_tab[21]
+#define __pyx_n_u_cline_in_traceback __pyx_string_tab[22]
+#define __pyx_n_u_cpp_byte __pyx_string_tab[23]
+#define __pyx_n_u_cpp_dict_path __pyx_string_tab[24]
+#define __pyx_n_u_cpp_dict_paths __pyx_string_tab[25]
+#define __pyx_n_u_cpp_node_id __pyx_string_tab[26]
+#define __pyx_n_u_cpp_string __pyx_string_tab[27]
+#define __pyx_n_u_cpp_words __pyx_string_tab[28]
+#define __pyx_n_u_cut __pyx_string_tab[29]
+#define __pyx_n_u_dict __pyx_string_tab[30]
+#define __pyx_n_u_dict_path __pyx_string_tab[31]
+#define __pyx_n_u_dict_paths __pyx_string_tab[32]
+#define __pyx_kp_u_disable __pyx_string_tab[33]
+#define __pyx_kp_u_enable __pyx_string_tab[34]
+#define __pyx_n_u_encode __pyx_string_tab[35]
+#define __pyx_n_u_end __pyx_string_tab[36]
+#define __pyx_n_u_fail __pyx_string_tab[37]
+#define __pyx_n_u_freq __pyx_string_tab[38]
+#define __pyx_n_u_func __pyx_string_tab[39]
+#define __pyx_kp_u_gc __pyx_string_tab[40]
+#define __pyx_n_u_get_borders __pyx_string_tab[41]
+#define __pyx_n_u_get_keyword __pyx_string_tab[42]
+#define __pyx_n_u_get_keywords __pyx_string_tab[43]
+#define __pyx_n_u_get_node __pyx_string_tab[44]
+#define __pyx_n_u_getstate __pyx_string_tab[45]
+#define __pyx_n_u_id __pyx_string_tab[46]
+#define __pyx_n_u_insert __pyx_string_tab[47]
+#define __pyx_n_u_int __pyx_string_tab[48]
+#define __pyx_n_u_is_coroutine __pyx_string_tab[49]
+#define __pyx_kp_u_isenabled __pyx_string_tab[50]
+#define __pyx_n_u_keyword __pyx_string_tab[51]
+#define __pyx_n_u_keywords __pyx_string_tab[52]
+#define __pyx_n_u_length __pyx_string_tab[53]
+#define __pyx_n_u_load_dict __pyx_string_tab[54]
+#define __pyx_n_u_log_end __pyx_string_tab[55]
+#define __pyx_n_u_log_prefix_sum __pyx_string_tab[56]
+#define __pyx_n_u_main __pyx_string_tab[57]
+#define __pyx_n_u_module __pyx_string_tab[58]
+#define __pyx_n_u_name __pyx_string_tab[59]
+#define __pyx_n_u_new_state __pyx_string_tab[60]
+#define __pyx_kp_u_no_default___reduce___due_to_non __pyx_string_tab[61]
+#define __pyx_n_u_node __pyx_string_tab[62]
+#define __pyx_n_u_node_dict __pyx_string_tab[63]
+#define __pyx_n_u_node_id __pyx_string_tab[64]
+#define __pyx_n_u_pop __pyx_string_tab[65]
+#define __pyx_n_u_pre __pyx_string_tab[66]
+#define __pyx_n_u_prefix_sum __pyx_string_tab[67]
+#define __pyx_n_u_pyx_state __pyx_string_tab[68]
+#define __pyx_n_u_qualname __pyx_string_tab[69]
+#define __pyx_n_u_reduce __pyx_string_tab[70]
+#define __pyx_n_u_reduce_cython __pyx_string_tab[71]
+#define __pyx_n_u_reduce_ex __pyx_string_tab[72]
+#define __pyx_n_u_res __pyx_string_tab[73]
+#define __pyx_n_u_reset __pyx_string_tab[74]
+#define __pyx_n_u_return __pyx_string_tab[75]
+#define __pyx_n_u_s __pyx_string_tab[76]
+#define __pyx_n_u_self __pyx_string_tab[77]
+#define __pyx_n_u_set_name __pyx_string_tab[78]
+#define __pyx_n_u_setstate __pyx_string_tab[79]
+#define __pyx_n_u_setstate_cython __pyx_string_tab[80]
+#define __pyx_n_u_str __pyx_string_tab[81]
+#define __pyx_kp_u_stringsource __pyx_string_tab[82]
+#define __pyx_n_u_test __pyx_string_tab[83]
+#define __pyx_n_u_text __pyx_string_tab[84]
+#define __pyx_n_u_trans_byte __pyx_string_tab[85]
+#define __pyx_n_u_trans_string __pyx_string_tab[86]
+#define __pyx_kp_u_utf_8 __pyx_string_tab[87]
+#define __pyx_n_u_word __pyx_string_tab[88]
+#define __pyx_n_u_word_count __pyx_string_tab[89]
+#define __pyx_n_u_words __pyx_string_tab[90]
 /* #### Code section: module_state_clear ### */
 #if CYTHON_USE_MODULE_STATE
 static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
@@ -2666,8 +2703,8 @@ static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_type_9Automaton_Automaton);
   Py_CLEAR(clear_module_state->__pyx_k_);
   for (int i=0; i<2; ++i) { Py_CLEAR(clear_module_state->__pyx_tuple[i]); }
-  for (int i=0; i<13; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<84; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<14; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
+  for (int i=0; i<91; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
   Py_CLEAR(clear_module_state->__pyx_int_1);
   return 0;
 }
@@ -2693,8 +2730,8 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
   Py_VISIT(traverse_module_state->__pyx_type_9Automaton_Automaton);
   Py_VISIT(traverse_module_state->__pyx_k_);
   for (int i=0; i<2; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_tuple[i]); }
-  for (int i=0; i<13; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<84; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<14; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
+  for (int i=0; i<91; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_1);
   return 0;
 }
@@ -2969,7 +3006,7 @@ static CYTHON_INLINE PyObject *__pyx_convert_PyByteArray_string_to_py_6libcpp_6s
   return __pyx_r;
 }
 
-/* "automaton.pyx":44
+/* "automaton.pyx":45
  *     cdef AutomatonImpl* autom
  * 
  *     def __cinit__(self, dict_paths = None):             # <<<<<<<<<<<<<<
@@ -2999,24 +3036,24 @@ static int __pyx_pw_9Automaton_9Automaton_1__cinit__(PyObject *__pyx_v_self, PyO
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_dict_paths,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_VARARGS(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 44, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 45, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_VARARGS(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 44, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 45, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "__cinit__", 0) < 0) __PYX_ERR(0, 44, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "__cinit__", 0) < 0) __PYX_ERR(0, 45, __pyx_L3_error)
       if (!values[0]) values[0] = __Pyx_NewRef(((PyObject *)Py_None));
     } else {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_VARARGS(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 44, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 45, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
@@ -3027,7 +3064,7 @@ static int __pyx_pw_9Automaton_9Automaton_1__cinit__(PyObject *__pyx_v_self, PyO
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 0, 1, __pyx_nargs); __PYX_ERR(0, 44, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 0, 1, __pyx_nargs); __PYX_ERR(0, 45, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3061,7 +3098,7 @@ static int __pyx_pf_9Automaton_9Automaton___cinit__(struct __pyx_obj_9Automaton_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "automaton.pyx":45
+  /* "automaton.pyx":46
  * 
  *     def __cinit__(self, dict_paths = None):
  *         self.autom = new AutomatonImpl()             # <<<<<<<<<<<<<<
@@ -3072,11 +3109,11 @@ static int __pyx_pf_9Automaton_9Automaton___cinit__(struct __pyx_obj_9Automaton_
     __pyx_t_1 = new automaton::Automaton();
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 45, __pyx_L1_error)
+    __PYX_ERR(0, 46, __pyx_L1_error)
   }
   __pyx_v_self->autom = __pyx_t_1;
 
-  /* "automaton.pyx":46
+  /* "automaton.pyx":47
  *     def __cinit__(self, dict_paths = None):
  *         self.autom = new AutomatonImpl()
  *         if dict_paths is not None:             # <<<<<<<<<<<<<<
@@ -3086,7 +3123,7 @@ static int __pyx_pf_9Automaton_9Automaton___cinit__(struct __pyx_obj_9Automaton_
   __pyx_t_2 = (__pyx_v_dict_paths != Py_None);
   if (__pyx_t_2) {
 
-    /* "automaton.pyx":47
+    /* "automaton.pyx":48
  *         self.autom = new AutomatonImpl()
  *         if dict_paths is not None:
  *             self.build(dict_paths)             # <<<<<<<<<<<<<<
@@ -3100,12 +3137,12 @@ static int __pyx_pf_9Automaton_9Automaton___cinit__(struct __pyx_obj_9Automaton_
       PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_dict_paths};
       __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_build, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 47, __pyx_L1_error)
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 48, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "automaton.pyx":46
+    /* "automaton.pyx":47
  *     def __cinit__(self, dict_paths = None):
  *         self.autom = new AutomatonImpl()
  *         if dict_paths is not None:             # <<<<<<<<<<<<<<
@@ -3114,7 +3151,7 @@ static int __pyx_pf_9Automaton_9Automaton___cinit__(struct __pyx_obj_9Automaton_
 */
   }
 
-  /* "automaton.pyx":44
+  /* "automaton.pyx":45
  *     cdef AutomatonImpl* autom
  * 
  *     def __cinit__(self, dict_paths = None):             # <<<<<<<<<<<<<<
@@ -3135,7 +3172,7 @@ static int __pyx_pf_9Automaton_9Automaton___cinit__(struct __pyx_obj_9Automaton_
   return __pyx_r;
 }
 
-/* "automaton.pyx":49
+/* "automaton.pyx":50
  *             self.build(dict_paths)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -3158,7 +3195,7 @@ static void __pyx_pw_9Automaton_9Automaton_3__dealloc__(PyObject *__pyx_v_self) 
 
 static void __pyx_pf_9Automaton_9Automaton_2__dealloc__(struct __pyx_obj_9Automaton_Automaton *__pyx_v_self) {
 
-  /* "automaton.pyx":50
+  /* "automaton.pyx":51
  * 
  *     def __dealloc__(self):
  *         del self.autom             # <<<<<<<<<<<<<<
@@ -3167,7 +3204,7 @@ static void __pyx_pf_9Automaton_9Automaton_2__dealloc__(struct __pyx_obj_9Automa
 */
   delete __pyx_v_self->autom;
 
-  /* "automaton.pyx":49
+  /* "automaton.pyx":50
  *             self.build(dict_paths)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -3178,7 +3215,7 @@ static void __pyx_pf_9Automaton_9Automaton_2__dealloc__(struct __pyx_obj_9Automa
   /* function exit code */
 }
 
-/* "automaton.pyx":52
+/* "automaton.pyx":53
  *         del self.autom
  * 
  *     def insert(self, s, freq = 1):             # <<<<<<<<<<<<<<
@@ -3226,35 +3263,35 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_s,&__pyx_mstate_global->__pyx_n_u_freq,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 52, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 53, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 52, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 53, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 52, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 53, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "insert", 0) < 0) __PYX_ERR(0, 52, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "insert", 0) < 0) __PYX_ERR(0, 53, __pyx_L3_error)
       if (!values[1]) values[1] = __Pyx_NewRef(((PyObject *)__pyx_mstate_global->__pyx_int_1));
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("insert", 0, 1, 2, i); __PYX_ERR(0, 52, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("insert", 0, 1, 2, i); __PYX_ERR(0, 53, __pyx_L3_error) }
       }
     } else {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 52, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 53, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 52, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 53, __pyx_L3_error)
         break;
         default: goto __pyx_L5_argtuple_error;
       }
@@ -3265,7 +3302,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("insert", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 52, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("insert", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 53, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3300,7 +3337,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_4insert(struct __pyx_obj_9Automa
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("insert", 0);
 
-  /* "automaton.pyx":53
+  /* "automaton.pyx":54
  * 
  *     def insert(self, s, freq = 1):
  *         cdef string cpp_string = s.encode()             # <<<<<<<<<<<<<<
@@ -3314,29 +3351,29 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_4insert(struct __pyx_obj_9Automa
     PyObject *__pyx_callargs[2] = {__pyx_t_2, NULL};
     __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_encode, __pyx_callargs+__pyx_t_3, (1-__pyx_t_3) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_4 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_4 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_cpp_string = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_4);
 
-  /* "automaton.pyx":54
+  /* "automaton.pyx":55
  *     def insert(self, s, freq = 1):
  *         cdef string cpp_string = s.encode()
  *         self.autom.insert(cpp_string, freq)             # <<<<<<<<<<<<<<
  * 
  *     def word_count(self) -> int:
 */
-  __pyx_t_5 = __Pyx_PyLong_As_uint64_t(__pyx_v_freq); if (unlikely((__pyx_t_5 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyLong_As_uint64_t(__pyx_v_freq); if (unlikely((__pyx_t_5 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 55, __pyx_L1_error)
   try {
     __pyx_v_self->autom->insert(__pyx_v_cpp_string, __pyx_t_5);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 54, __pyx_L1_error)
+    __PYX_ERR(0, 55, __pyx_L1_error)
   }
 
-  /* "automaton.pyx":52
+  /* "automaton.pyx":53
  *         del self.autom
  * 
  *     def insert(self, s, freq = 1):             # <<<<<<<<<<<<<<
@@ -3358,7 +3395,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_4insert(struct __pyx_obj_9Automa
   return __pyx_r;
 }
 
-/* "automaton.pyx":56
+/* "automaton.pyx":57
  *         self.autom.insert(cpp_string, freq)
  * 
  *     def word_count(self) -> int:             # <<<<<<<<<<<<<<
@@ -3418,7 +3455,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_6word_count(struct __pyx_obj_9Au
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("word_count", 0);
 
-  /* "automaton.pyx":57
+  /* "automaton.pyx":58
  * 
  *     def word_count(self) -> int:
  *         return self.autom.word_count()             # <<<<<<<<<<<<<<
@@ -3430,16 +3467,16 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_6word_count(struct __pyx_obj_9Au
     __pyx_t_1 = __pyx_v_self->autom->word_count();
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 57, __pyx_L1_error)
+    __PYX_ERR(0, 58, __pyx_L1_error)
   }
-  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 57, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (!(likely(PyLong_CheckExact(__pyx_t_2)) || __Pyx_RaiseUnexpectedTypeError("int", __pyx_t_2))) __PYX_ERR(0, 57, __pyx_L1_error)
+  if (!(likely(PyLong_CheckExact(__pyx_t_2)) || __Pyx_RaiseUnexpectedTypeError("int", __pyx_t_2))) __PYX_ERR(0, 58, __pyx_L1_error)
   __pyx_r = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "automaton.pyx":56
+  /* "automaton.pyx":57
  *         self.autom.insert(cpp_string, freq)
  * 
  *     def word_count(self) -> int:             # <<<<<<<<<<<<<<
@@ -3458,7 +3495,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_6word_count(struct __pyx_obj_9Au
   return __pyx_r;
 }
 
-/* "automaton.pyx":59
+/* "automaton.pyx":60
  *         return self.autom.word_count()
  * 
  *     def get_node(self, node_id) -> dict:             # <<<<<<<<<<<<<<
@@ -3505,32 +3542,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_node_id,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 59, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 60, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 59, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 60, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_node", 0) < 0) __PYX_ERR(0, 59, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_node", 0) < 0) __PYX_ERR(0, 60, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_node", 1, 1, 1, i); __PYX_ERR(0, 59, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_node", 1, 1, 1, i); __PYX_ERR(0, 60, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 59, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 60, __pyx_L3_error)
     }
     __pyx_v_node_id = values[0];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_node", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 59, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_node", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 60, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3565,123 +3602,123 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_8get_node(struct __pyx_obj_9Auto
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_node", 0);
 
-  /* "automaton.pyx":60
+  /* "automaton.pyx":61
  * 
  *     def get_node(self, node_id) -> dict:
  *         cdef Node node = self.autom.get_node(node_id)             # <<<<<<<<<<<<<<
  *         node_dict = {
  *             'end': node.end,
 */
-  __pyx_t_1 = __Pyx_PyLong_As_size_t(__pyx_v_node_id); if (unlikely((__pyx_t_1 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_As_size_t(__pyx_v_node_id); if (unlikely((__pyx_t_1 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 61, __pyx_L1_error)
   try {
     __pyx_t_2 = __pyx_v_self->autom->get_node(__pyx_t_1);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 60, __pyx_L1_error)
+    __PYX_ERR(0, 61, __pyx_L1_error)
   }
   __pyx_v_node = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_2);
 
-  /* "automaton.pyx":62
+  /* "automaton.pyx":63
  *         cdef Node node = self.autom.get_node(node_id)
  *         node_dict = {
  *             'end': node.end,             # <<<<<<<<<<<<<<
  *             'prefix_sum': node.prefix_sum,
  *             'log_end': node.log_end,
 */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.end); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.end); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_end, __pyx_t_4) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_end, __pyx_t_4) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":63
+  /* "automaton.pyx":64
  *         node_dict = {
  *             'end': node.end,
  *             'prefix_sum': node.prefix_sum,             # <<<<<<<<<<<<<<
  *             'log_end': node.log_end,
  *             'log_prefix_sum': node.log_prefix_sum,
 */
-  __pyx_t_4 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.prefix_sum); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.prefix_sum); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_prefix_sum, __pyx_t_4) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_prefix_sum, __pyx_t_4) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":64
+  /* "automaton.pyx":65
  *             'end': node.end,
  *             'prefix_sum': node.prefix_sum,
  *             'log_end': node.log_end,             # <<<<<<<<<<<<<<
  *             'log_prefix_sum': node.log_prefix_sum,
  *             'id': node.id,
 */
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_node.log_end); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_node.log_end); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_end, __pyx_t_4) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_end, __pyx_t_4) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":65
+  /* "automaton.pyx":66
  *             'prefix_sum': node.prefix_sum,
  *             'log_end': node.log_end,
  *             'log_prefix_sum': node.log_prefix_sum,             # <<<<<<<<<<<<<<
  *             'id': node.id,
  *             'pre': node.pre,
 */
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_node.log_prefix_sum); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_node.log_prefix_sum); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_prefix_sum, __pyx_t_4) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_prefix_sum, __pyx_t_4) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":66
+  /* "automaton.pyx":67
  *             'log_end': node.log_end,
  *             'log_prefix_sum': node.log_prefix_sum,
  *             'id': node.id,             # <<<<<<<<<<<<<<
  *             'pre': node.pre,
  *             'fail': node.fail,
 */
-  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_4) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_4) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":67
+  /* "automaton.pyx":68
  *             'log_prefix_sum': node.log_prefix_sum,
  *             'id': node.id,
  *             'pre': node.pre,             # <<<<<<<<<<<<<<
  *             'fail': node.fail,
  *             'length': node.length
 */
-  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.pre); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.pre); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_pre, __pyx_t_4) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_pre, __pyx_t_4) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":68
+  /* "automaton.pyx":69
  *             'id': node.id,
  *             'pre': node.pre,
  *             'fail': node.fail,             # <<<<<<<<<<<<<<
  *             'length': node.length
  *         }
 */
-  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.fail); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 68, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.fail); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 69, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_fail, __pyx_t_4) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_fail, __pyx_t_4) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":69
+  /* "automaton.pyx":70
  *             'pre': node.pre,
  *             'fail': node.fail,
  *             'length': node.length             # <<<<<<<<<<<<<<
  *         }
  *         return node_dict
 */
-  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.length); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.length); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 70, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_length, __pyx_t_4) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_length, __pyx_t_4) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_node_dict = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "automaton.pyx":71
+  /* "automaton.pyx":72
  *             'length': node.length
  *         }
  *         return node_dict             # <<<<<<<<<<<<<<
@@ -3693,7 +3730,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_8get_node(struct __pyx_obj_9Auto
   __pyx_r = __pyx_v_node_dict;
   goto __pyx_L0;
 
-  /* "automaton.pyx":59
+  /* "automaton.pyx":60
  *         return self.autom.word_count()
  * 
  *     def get_node(self, node_id) -> dict:             # <<<<<<<<<<<<<<
@@ -3714,7 +3751,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_8get_node(struct __pyx_obj_9Auto
   return __pyx_r;
 }
 
-/* "automaton.pyx":73
+/* "automaton.pyx":74
  *         return node_dict
  * 
  *     def get_keyword(self, node_id) -> str:             # <<<<<<<<<<<<<<
@@ -3761,32 +3798,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_node_id,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 73, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 74, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 73, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 74, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_keyword", 0) < 0) __PYX_ERR(0, 73, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_keyword", 0) < 0) __PYX_ERR(0, 74, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_keyword", 1, 1, 1, i); __PYX_ERR(0, 73, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_keyword", 1, 1, 1, i); __PYX_ERR(0, 74, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 73, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 74, __pyx_L3_error)
     }
     __pyx_v_node_id = values[0];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_keyword", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 73, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_keyword", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 74, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3818,7 +3855,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_10get_keyword(struct __pyx_obj_9
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_keyword", 0);
 
-  /* "automaton.pyx":74
+  /* "automaton.pyx":75
  * 
  *     def get_keyword(self, node_id) -> str:
  *         return self.autom.get_keyword(node_id).decode('utf-8')             # <<<<<<<<<<<<<<
@@ -3826,20 +3863,20 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_10get_keyword(struct __pyx_obj_9
  *     def trans_string(self, s) -> dict:
 */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyLong_As_size_t(__pyx_v_node_id); if (unlikely((__pyx_t_1 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_As_size_t(__pyx_v_node_id); if (unlikely((__pyx_t_1 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 75, __pyx_L1_error)
   try {
     __pyx_t_2 = __pyx_v_self->autom->get_keyword(__pyx_t_1);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 74, __pyx_L1_error)
+    __PYX_ERR(0, 75, __pyx_L1_error)
   }
-  __pyx_t_3 = __Pyx_decode_cpp_string(__PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_2), 0, PY_SSIZE_T_MAX, NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_decode_cpp_string(__PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_2), 0, PY_SSIZE_T_MAX, NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_r = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "automaton.pyx":73
+  /* "automaton.pyx":74
  *         return node_dict
  * 
  *     def get_keyword(self, node_id) -> str:             # <<<<<<<<<<<<<<
@@ -3858,7 +3895,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_10get_keyword(struct __pyx_obj_9
   return __pyx_r;
 }
 
-/* "automaton.pyx":76
+/* "automaton.pyx":77
  *         return self.autom.get_keyword(node_id).decode('utf-8')
  * 
  *     def trans_string(self, s) -> dict:             # <<<<<<<<<<<<<<
@@ -3905,32 +3942,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_s,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 76, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 77, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 76, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 77, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "trans_string", 0) < 0) __PYX_ERR(0, 76, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "trans_string", 0) < 0) __PYX_ERR(0, 77, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("trans_string", 1, 1, 1, i); __PYX_ERR(0, 76, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("trans_string", 1, 1, 1, i); __PYX_ERR(0, 77, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 76, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 77, __pyx_L3_error)
     }
     __pyx_v_s = values[0];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("trans_string", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 76, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("trans_string", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 77, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3967,7 +4004,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_12trans_string(struct __pyx_obj_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("trans_string", 0);
 
-  /* "automaton.pyx":77
+  /* "automaton.pyx":78
  * 
  *     def trans_string(self, s) -> dict:
  *         cdef string cpp_string = s.encode()             # <<<<<<<<<<<<<<
@@ -3981,14 +4018,14 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_12trans_string(struct __pyx_obj_
     PyObject *__pyx_callargs[2] = {__pyx_t_2, NULL};
     __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_encode, __pyx_callargs+__pyx_t_3, (1-__pyx_t_3) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_4 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_4 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 78, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_cpp_string = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_4);
 
-  /* "automaton.pyx":78
+  /* "automaton.pyx":79
  *     def trans_string(self, s) -> dict:
  *         cdef string cpp_string = s.encode()
  *         cdef Node node = self.autom.trans_string(cpp_string)             # <<<<<<<<<<<<<<
@@ -3999,111 +4036,111 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_12trans_string(struct __pyx_obj_
     __pyx_t_5 = __pyx_v_self->autom->trans_string(__pyx_v_cpp_string);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 78, __pyx_L1_error)
+    __PYX_ERR(0, 79, __pyx_L1_error)
   }
   __pyx_v_node = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_5);
 
-  /* "automaton.pyx":80
+  /* "automaton.pyx":81
  *         cdef Node node = self.autom.trans_string(cpp_string)
  *         node_dict = {
  *             'end': node.end,             # <<<<<<<<<<<<<<
  *             'prefix_sum': node.prefix_sum,
  *             'log_end': node.log_end,
 */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.end); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.end); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_end, __pyx_t_2) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_end, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":81
+  /* "automaton.pyx":82
  *         node_dict = {
  *             'end': node.end,
  *             'prefix_sum': node.prefix_sum,             # <<<<<<<<<<<<<<
  *             'log_end': node.log_end,
  *             'log_prefix_sum': node.log_prefix_sum,
 */
-  __pyx_t_2 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.prefix_sum); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.prefix_sum); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_prefix_sum, __pyx_t_2) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_prefix_sum, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":82
+  /* "automaton.pyx":83
  *             'end': node.end,
  *             'prefix_sum': node.prefix_sum,
  *             'log_end': node.log_end,             # <<<<<<<<<<<<<<
  *             'log_prefix_sum': node.log_prefix_sum,
  *             'id': node.id,
 */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_node.log_end); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_node.log_end); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_log_end, __pyx_t_2) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_log_end, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":83
+  /* "automaton.pyx":84
  *             'prefix_sum': node.prefix_sum,
  *             'log_end': node.log_end,
  *             'log_prefix_sum': node.log_prefix_sum,             # <<<<<<<<<<<<<<
  *             'id': node.id,
  *             'pre': node.pre,
 */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_node.log_prefix_sum); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_node.log_prefix_sum); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_log_prefix_sum, __pyx_t_2) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_log_prefix_sum, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":84
+  /* "automaton.pyx":85
  *             'log_end': node.log_end,
  *             'log_prefix_sum': node.log_prefix_sum,
  *             'id': node.id,             # <<<<<<<<<<<<<<
  *             'pre': node.pre,
  *             'fail': node.fail,
 */
-  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_v_node.id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_v_node.id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 85, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_2) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":85
+  /* "automaton.pyx":86
  *             'log_prefix_sum': node.log_prefix_sum,
  *             'id': node.id,
  *             'pre': node.pre,             # <<<<<<<<<<<<<<
  *             'fail': node.fail,
  *             'length': node.length
 */
-  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_v_node.pre); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 85, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_v_node.pre); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_pre, __pyx_t_2) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_pre, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":86
+  /* "automaton.pyx":87
  *             'id': node.id,
  *             'pre': node.pre,
  *             'fail': node.fail,             # <<<<<<<<<<<<<<
  *             'length': node.length
  *         }
 */
-  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_v_node.fail); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_v_node.fail); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_fail, __pyx_t_2) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_fail, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":87
+  /* "automaton.pyx":88
  *             'pre': node.pre,
  *             'fail': node.fail,
  *             'length': node.length             # <<<<<<<<<<<<<<
  *         }
  *         return node_dict
 */
-  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_v_node.length); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_FromSize_t(__pyx_v_node.length); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_length, __pyx_t_2) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_length, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_node_dict = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "automaton.pyx":89
+  /* "automaton.pyx":90
  *             'length': node.length
  *         }
  *         return node_dict             # <<<<<<<<<<<<<<
@@ -4115,7 +4152,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_12trans_string(struct __pyx_obj_
   __pyx_r = __pyx_v_node_dict;
   goto __pyx_L0;
 
-  /* "automaton.pyx":76
+  /* "automaton.pyx":77
  *         return self.autom.get_keyword(node_id).decode('utf-8')
  * 
  *     def trans_string(self, s) -> dict:             # <<<<<<<<<<<<<<
@@ -4136,7 +4173,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_12trans_string(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "automaton.pyx":91
+/* "automaton.pyx":92
  *         return node_dict
  * 
  *     def trans_byte(self, byte):             # <<<<<<<<<<<<<<
@@ -4183,32 +4220,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_byte,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 91, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 92, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 91, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 92, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "trans_byte", 0) < 0) __PYX_ERR(0, 91, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "trans_byte", 0) < 0) __PYX_ERR(0, 92, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("trans_byte", 1, 1, 1, i); __PYX_ERR(0, 91, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("trans_byte", 1, 1, 1, i); __PYX_ERR(0, 92, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 91, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 92, __pyx_L3_error)
     }
     __pyx_v_byte = values[0];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("trans_byte", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 91, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("trans_byte", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 92, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4244,17 +4281,17 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_14trans_byte(struct __pyx_obj_9A
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("trans_byte", 0);
 
-  /* "automaton.pyx":92
+  /* "automaton.pyx":93
  * 
  *     def trans_byte(self, byte):
  *         cdef uint8_t cpp_byte = byte             # <<<<<<<<<<<<<<
  *         cdef Node node = self.autom.trans_byte(cpp_byte)
  *         node_dict = {
 */
-  __pyx_t_1 = __Pyx_PyLong_As_uint8_t(__pyx_v_byte); if (unlikely((__pyx_t_1 == ((uint8_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_As_uint8_t(__pyx_v_byte); if (unlikely((__pyx_t_1 == ((uint8_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 93, __pyx_L1_error)
   __pyx_v_cpp_byte = __pyx_t_1;
 
-  /* "automaton.pyx":93
+  /* "automaton.pyx":94
  *     def trans_byte(self, byte):
  *         cdef uint8_t cpp_byte = byte
  *         cdef Node node = self.autom.trans_byte(cpp_byte)             # <<<<<<<<<<<<<<
@@ -4265,111 +4302,111 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_14trans_byte(struct __pyx_obj_9A
     __pyx_t_2 = __pyx_v_self->autom->trans_byte(__pyx_v_cpp_byte);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 93, __pyx_L1_error)
+    __PYX_ERR(0, 94, __pyx_L1_error)
   }
   __pyx_v_node = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_2);
 
-  /* "automaton.pyx":95
+  /* "automaton.pyx":96
  *         cdef Node node = self.autom.trans_byte(cpp_byte)
  *         node_dict = {
  *             'end': node.end,             # <<<<<<<<<<<<<<
  *             'prefix_sum': node.prefix_sum,
  *             'log_end': node.log_end,
 */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.end); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.end); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_end, __pyx_t_4) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_end, __pyx_t_4) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":96
+  /* "automaton.pyx":97
  *         node_dict = {
  *             'end': node.end,
  *             'prefix_sum': node.prefix_sum,             # <<<<<<<<<<<<<<
  *             'log_end': node.log_end,
  *             'log_prefix_sum': node.log_prefix_sum,
 */
-  __pyx_t_4 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.prefix_sum); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.prefix_sum); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_prefix_sum, __pyx_t_4) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_prefix_sum, __pyx_t_4) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":97
+  /* "automaton.pyx":98
  *             'end': node.end,
  *             'prefix_sum': node.prefix_sum,
  *             'log_end': node.log_end,             # <<<<<<<<<<<<<<
  *             'log_prefix_sum': node.log_prefix_sum,
  *             'id': node.id,
 */
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_node.log_end); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_node.log_end); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_end, __pyx_t_4) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_end, __pyx_t_4) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":98
+  /* "automaton.pyx":99
  *             'prefix_sum': node.prefix_sum,
  *             'log_end': node.log_end,
  *             'log_prefix_sum': node.log_prefix_sum,             # <<<<<<<<<<<<<<
  *             'id': node.id,
  *             'pre': node.pre,
 */
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_node.log_prefix_sum); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_node.log_prefix_sum); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 99, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_prefix_sum, __pyx_t_4) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_prefix_sum, __pyx_t_4) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":99
+  /* "automaton.pyx":100
  *             'log_end': node.log_end,
  *             'log_prefix_sum': node.log_prefix_sum,
  *             'id': node.id,             # <<<<<<<<<<<<<<
  *             'pre': node.pre,
  *             'fail': node.fail,
 */
-  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.id); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_4) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_4) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":100
+  /* "automaton.pyx":101
  *             'log_prefix_sum': node.log_prefix_sum,
  *             'id': node.id,
  *             'pre': node.pre,             # <<<<<<<<<<<<<<
  *             'fail': node.fail,
  *             'length': node.length
 */
-  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.pre); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.pre); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 101, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_pre, __pyx_t_4) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_pre, __pyx_t_4) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":101
+  /* "automaton.pyx":102
  *             'id': node.id,
  *             'pre': node.pre,
  *             'fail': node.fail,             # <<<<<<<<<<<<<<
  *             'length': node.length
  *         }
 */
-  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.fail); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.fail); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 102, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_fail, __pyx_t_4) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_fail, __pyx_t_4) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "automaton.pyx":102
+  /* "automaton.pyx":103
  *             'pre': node.pre,
  *             'fail': node.fail,
  *             'length': node.length             # <<<<<<<<<<<<<<
  *         }
  *         return node_dict
 */
-  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.length); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_FromSize_t(__pyx_v_node.length); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 103, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_length, __pyx_t_4) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_length, __pyx_t_4) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_node_dict = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "automaton.pyx":104
+  /* "automaton.pyx":105
  *             'length': node.length
  *         }
  *         return node_dict             # <<<<<<<<<<<<<<
@@ -4381,7 +4418,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_14trans_byte(struct __pyx_obj_9A
   __pyx_r = __pyx_v_node_dict;
   goto __pyx_L0;
 
-  /* "automaton.pyx":91
+  /* "automaton.pyx":92
  *         return node_dict
  * 
  *     def trans_byte(self, byte):             # <<<<<<<<<<<<<<
@@ -4402,7 +4439,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_14trans_byte(struct __pyx_obj_9A
   return __pyx_r;
 }
 
-/* "automaton.pyx":106
+/* "automaton.pyx":107
  *         return node_dict
  * 
  *     def get_borders(self, node_id):             # <<<<<<<<<<<<<<
@@ -4449,32 +4486,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_node_id,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 106, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 107, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 106, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 107, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_borders", 0) < 0) __PYX_ERR(0, 106, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_borders", 0) < 0) __PYX_ERR(0, 107, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_borders", 1, 1, 1, i); __PYX_ERR(0, 106, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_borders", 1, 1, 1, i); __PYX_ERR(0, 107, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 106, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 107, __pyx_L3_error)
     }
     __pyx_v_node_id = values[0];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_borders", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 106, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_borders", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 107, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4515,17 +4552,17 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_16get_borders(struct __pyx_obj_9
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_borders", 0);
 
-  /* "automaton.pyx":107
+  /* "automaton.pyx":108
  * 
  *     def get_borders(self, node_id):
  *         cdef size_t cpp_node_id = node_id             # <<<<<<<<<<<<<<
  *         cdef vector[Node] borders = self.autom.get_borders(cpp_node_id)
  *         res = []
 */
-  __pyx_t_1 = __Pyx_PyLong_As_size_t(__pyx_v_node_id); if (unlikely((__pyx_t_1 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 107, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_As_size_t(__pyx_v_node_id); if (unlikely((__pyx_t_1 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 108, __pyx_L1_error)
   __pyx_v_cpp_node_id = __pyx_t_1;
 
-  /* "automaton.pyx":108
+  /* "automaton.pyx":109
  *     def get_borders(self, node_id):
  *         cdef size_t cpp_node_id = node_id
  *         cdef vector[Node] borders = self.autom.get_borders(cpp_node_id)             # <<<<<<<<<<<<<<
@@ -4536,23 +4573,23 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_16get_borders(struct __pyx_obj_9
     __pyx_t_2 = __pyx_v_self->autom->get_borders(__pyx_v_cpp_node_id);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 108, __pyx_L1_error)
+    __PYX_ERR(0, 109, __pyx_L1_error)
   }
   __pyx_v_borders = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_2);
 
-  /* "automaton.pyx":109
+  /* "automaton.pyx":110
  *         cdef size_t cpp_node_id = node_id
  *         cdef vector[Node] borders = self.autom.get_borders(cpp_node_id)
  *         res = []             # <<<<<<<<<<<<<<
  *         for node in borders:
  *             node_dict = {
 */
-  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 109, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_v_res = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "automaton.pyx":110
+  /* "automaton.pyx":111
  *         cdef vector[Node] borders = self.autom.get_borders(cpp_node_id)
  *         res = []
  *         for node in borders:             # <<<<<<<<<<<<<<
@@ -4564,116 +4601,116 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_16get_borders(struct __pyx_obj_9
     __pyx_t_5 = *__pyx_t_4;
     __pyx_v_node = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_5);
 
-    /* "automaton.pyx":112
+    /* "automaton.pyx":113
  *         for node in borders:
  *             node_dict = {
  *                 'end': node.end,             # <<<<<<<<<<<<<<
  *                 'prefix_sum': node.prefix_sum,
  *                 'log_end': node.log_end,
 */
-    __pyx_t_3 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_6 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_end, __pyx_t_6) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_end, __pyx_t_6) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "automaton.pyx":113
+    /* "automaton.pyx":114
  *             node_dict = {
  *                 'end': node.end,
  *                 'prefix_sum': node.prefix_sum,             # <<<<<<<<<<<<<<
  *                 'log_end': node.log_end,
  *                 'log_prefix_sum': node.log_prefix_sum,
 */
-    __pyx_t_6 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.prefix_sum); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 113, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyLong_From_uint64_t(__pyx_v_node.prefix_sum); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 114, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_prefix_sum, __pyx_t_6) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_prefix_sum, __pyx_t_6) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "automaton.pyx":114
+    /* "automaton.pyx":115
  *                 'end': node.end,
  *                 'prefix_sum': node.prefix_sum,
  *                 'log_end': node.log_end,             # <<<<<<<<<<<<<<
  *                 'log_prefix_sum': node.log_prefix_sum,
  *                 'id': node.id,
 */
-    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_node.log_end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 114, __pyx_L1_error)
+    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_node.log_end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 115, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_end, __pyx_t_6) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_end, __pyx_t_6) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "automaton.pyx":115
+    /* "automaton.pyx":116
  *                 'prefix_sum': node.prefix_sum,
  *                 'log_end': node.log_end,
  *                 'log_prefix_sum': node.log_prefix_sum,             # <<<<<<<<<<<<<<
  *                 'id': node.id,
  *                 'pre': node.pre,
 */
-    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_node.log_prefix_sum); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 115, __pyx_L1_error)
+    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_node.log_prefix_sum); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 116, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_prefix_sum, __pyx_t_6) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_log_prefix_sum, __pyx_t_6) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "automaton.pyx":116
+    /* "automaton.pyx":117
  *                 'log_end': node.log_end,
  *                 'log_prefix_sum': node.log_prefix_sum,
  *                 'id': node.id,             # <<<<<<<<<<<<<<
  *                 'pre': node.pre,
  *                 'fail': node.fail,
 */
-    __pyx_t_6 = __Pyx_PyLong_FromSize_t(__pyx_v_node.id); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 116, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyLong_FromSize_t(__pyx_v_node.id); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 117, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_6) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_id, __pyx_t_6) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "automaton.pyx":117
+    /* "automaton.pyx":118
  *                 'log_prefix_sum': node.log_prefix_sum,
  *                 'id': node.id,
  *                 'pre': node.pre,             # <<<<<<<<<<<<<<
  *                 'fail': node.fail,
  *                 'length': node.length
 */
-    __pyx_t_6 = __Pyx_PyLong_FromSize_t(__pyx_v_node.pre); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 117, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyLong_FromSize_t(__pyx_v_node.pre); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_pre, __pyx_t_6) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_pre, __pyx_t_6) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "automaton.pyx":118
+    /* "automaton.pyx":119
  *                 'id': node.id,
  *                 'pre': node.pre,
  *                 'fail': node.fail,             # <<<<<<<<<<<<<<
  *                 'length': node.length
  *             }
 */
-    __pyx_t_6 = __Pyx_PyLong_FromSize_t(__pyx_v_node.fail); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyLong_FromSize_t(__pyx_v_node.fail); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_fail, __pyx_t_6) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_fail, __pyx_t_6) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "automaton.pyx":119
+    /* "automaton.pyx":120
  *                 'pre': node.pre,
  *                 'fail': node.fail,
  *                 'length': node.length             # <<<<<<<<<<<<<<
  *             }
  *             res.append(node_dict)
 */
-    __pyx_t_6 = __Pyx_PyLong_FromSize_t(__pyx_v_node.length); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 119, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyLong_FromSize_t(__pyx_v_node.length); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_length, __pyx_t_6) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_length, __pyx_t_6) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_XDECREF_SET(__pyx_v_node_dict, ((PyObject*)__pyx_t_3));
     __pyx_t_3 = 0;
 
-    /* "automaton.pyx":121
+    /* "automaton.pyx":122
  *                 'length': node.length
  *             }
  *             res.append(node_dict)             # <<<<<<<<<<<<<<
  *         return res
  * 
 */
-    __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_res, __pyx_v_node_dict); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 121, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_res, __pyx_v_node_dict); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 122, __pyx_L1_error)
 
-    /* "automaton.pyx":110
+    /* "automaton.pyx":111
  *         cdef vector[Node] borders = self.autom.get_borders(cpp_node_id)
  *         res = []
  *         for node in borders:             # <<<<<<<<<<<<<<
@@ -4682,7 +4719,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_16get_borders(struct __pyx_obj_9
 */
   }
 
-  /* "automaton.pyx":122
+  /* "automaton.pyx":123
  *             }
  *             res.append(node_dict)
  *         return res             # <<<<<<<<<<<<<<
@@ -4694,7 +4731,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_16get_borders(struct __pyx_obj_9
   __pyx_r = __pyx_v_res;
   goto __pyx_L0;
 
-  /* "automaton.pyx":106
+  /* "automaton.pyx":107
  *         return node_dict
  * 
  *     def get_borders(self, node_id):             # <<<<<<<<<<<<<<
@@ -4716,7 +4753,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_16get_borders(struct __pyx_obj_9
   return __pyx_r;
 }
 
-/* "automaton.pyx":124
+/* "automaton.pyx":125
  *         return res
  * 
  *     def get_keywords(self, s):             # <<<<<<<<<<<<<<
@@ -4763,32 +4800,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_s,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 124, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 125, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 124, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 125, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_keywords", 0) < 0) __PYX_ERR(0, 124, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_keywords", 0) < 0) __PYX_ERR(0, 125, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_keywords", 1, 1, 1, i); __PYX_ERR(0, 124, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_keywords", 1, 1, 1, i); __PYX_ERR(0, 125, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 124, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 125, __pyx_L3_error)
     }
     __pyx_v_s = values[0];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_keywords", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 124, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_keywords", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 125, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4828,7 +4865,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_18get_keywords(struct __pyx_obj_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_keywords", 0);
 
-  /* "automaton.pyx":125
+  /* "automaton.pyx":126
  * 
  *     def get_keywords(self, s):
  *         cdef string cpp_string = s.encode()             # <<<<<<<<<<<<<<
@@ -4842,14 +4879,14 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_18get_keywords(struct __pyx_obj_
     PyObject *__pyx_callargs[2] = {__pyx_t_2, NULL};
     __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_encode, __pyx_callargs+__pyx_t_3, (1-__pyx_t_3) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_4 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_4 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_cpp_string = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_4);
 
-  /* "automaton.pyx":126
+  /* "automaton.pyx":127
  *     def get_keywords(self, s):
  *         cdef string cpp_string = s.encode()
  *         cdef vector[string] keywords = self.autom.get_keywords(cpp_string)             # <<<<<<<<<<<<<<
@@ -4860,23 +4897,23 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_18get_keywords(struct __pyx_obj_
     __pyx_t_5 = __pyx_v_self->autom->get_keywords(__pyx_v_cpp_string);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 126, __pyx_L1_error)
+    __PYX_ERR(0, 127, __pyx_L1_error)
   }
   __pyx_v_keywords = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_5);
 
-  /* "automaton.pyx":127
+  /* "automaton.pyx":128
  *         cdef string cpp_string = s.encode()
  *         cdef vector[string] keywords = self.autom.get_keywords(cpp_string)
  *         res = []             # <<<<<<<<<<<<<<
  *         for keyword in keywords:
  *             res.append(keyword.decode('utf-8'))
 */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_res = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "automaton.pyx":128
+  /* "automaton.pyx":129
  *         cdef vector[string] keywords = self.autom.get_keywords(cpp_string)
  *         res = []
  *         for keyword in keywords:             # <<<<<<<<<<<<<<
@@ -4888,19 +4925,19 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_18get_keywords(struct __pyx_obj_
     __pyx_t_4 = *__pyx_t_6;
     __pyx_v_keyword = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_4);
 
-    /* "automaton.pyx":129
+    /* "automaton.pyx":130
  *         res = []
  *         for keyword in keywords:
  *             res.append(keyword.decode('utf-8'))             # <<<<<<<<<<<<<<
  *         return res
  * 
 */
-    __pyx_t_1 = __Pyx_decode_cpp_string(__pyx_v_keyword, 0, PY_SSIZE_T_MAX, NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_decode_cpp_string(__pyx_v_keyword, 0, PY_SSIZE_T_MAX, NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_res, __pyx_t_1); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_res, __pyx_t_1); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "automaton.pyx":128
+    /* "automaton.pyx":129
  *         cdef vector[string] keywords = self.autom.get_keywords(cpp_string)
  *         res = []
  *         for keyword in keywords:             # <<<<<<<<<<<<<<
@@ -4909,7 +4946,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_18get_keywords(struct __pyx_obj_
 */
   }
 
-  /* "automaton.pyx":130
+  /* "automaton.pyx":131
  *         for keyword in keywords:
  *             res.append(keyword.decode('utf-8'))
  *         return res             # <<<<<<<<<<<<<<
@@ -4921,7 +4958,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_18get_keywords(struct __pyx_obj_
   __pyx_r = __pyx_v_res;
   goto __pyx_L0;
 
-  /* "automaton.pyx":124
+  /* "automaton.pyx":125
  *         return res
  * 
  *     def get_keywords(self, s):             # <<<<<<<<<<<<<<
@@ -4942,7 +4979,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_18get_keywords(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "automaton.pyx":132
+/* "automaton.pyx":133
  *         return res
  * 
  *     def reset(self, new_state = ROOT):             # <<<<<<<<<<<<<<
@@ -4989,24 +5026,24 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_new_state,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 132, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 133, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 132, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 133, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "reset", 0) < 0) __PYX_ERR(0, 132, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "reset", 0) < 0) __PYX_ERR(0, 133, __pyx_L3_error)
       if (!values[0]) values[0] = __Pyx_NewRef(__pyx_mstate_global->__pyx_k_);
     } else {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 132, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 133, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
@@ -5017,7 +5054,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("reset", 0, 0, 1, __pyx_nargs); __PYX_ERR(0, 132, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("reset", 0, 0, 1, __pyx_nargs); __PYX_ERR(0, 133, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5047,22 +5084,22 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_20reset(struct __pyx_obj_9Automa
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("reset", 0);
 
-  /* "automaton.pyx":133
+  /* "automaton.pyx":134
  * 
  *     def reset(self, new_state = ROOT):
  *         self.autom.reset(new_state)             # <<<<<<<<<<<<<<
  * 
  *     def build(self, dict_paths=None):
 */
-  __pyx_t_1 = __Pyx_PyLong_As_size_t(__pyx_v_new_state); if (unlikely((__pyx_t_1 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 133, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_As_size_t(__pyx_v_new_state); if (unlikely((__pyx_t_1 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L1_error)
   try {
     __pyx_v_self->autom->reset(__pyx_t_1);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 133, __pyx_L1_error)
+    __PYX_ERR(0, 134, __pyx_L1_error)
   }
 
-  /* "automaton.pyx":132
+  /* "automaton.pyx":133
  *         return res
  * 
  *     def reset(self, new_state = ROOT):             # <<<<<<<<<<<<<<
@@ -5082,7 +5119,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_20reset(struct __pyx_obj_9Automa
   return __pyx_r;
 }
 
-/* "automaton.pyx":135
+/* "automaton.pyx":136
  *         self.autom.reset(new_state)
  * 
  *     def build(self, dict_paths=None):             # <<<<<<<<<<<<<<
@@ -5129,24 +5166,24 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_dict_paths,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 135, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 136, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 135, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 136, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "build", 0) < 0) __PYX_ERR(0, 135, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "build", 0) < 0) __PYX_ERR(0, 136, __pyx_L3_error)
       if (!values[0]) values[0] = __Pyx_NewRef(((PyObject *)Py_None));
     } else {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 135, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 136, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
@@ -5157,7 +5194,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("build", 0, 0, 1, __pyx_nargs); __PYX_ERR(0, 135, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("build", 0, 0, 1, __pyx_nargs); __PYX_ERR(0, 136, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5197,7 +5234,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
   __Pyx_RefNannySetupContext("build", 0);
   __Pyx_INCREF(__pyx_v_dict_paths);
 
-  /* "automaton.pyx":136
+  /* "automaton.pyx":137
  * 
  *     def build(self, dict_paths=None):
  *         if isinstance(dict_paths, str):             # <<<<<<<<<<<<<<
@@ -5207,22 +5244,22 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
   __pyx_t_1 = PyUnicode_Check(__pyx_v_dict_paths); 
   if (__pyx_t_1) {
 
-    /* "automaton.pyx":137
+    /* "automaton.pyx":138
  *     def build(self, dict_paths=None):
  *         if isinstance(dict_paths, str):
  *             dict_paths = [dict_paths]             # <<<<<<<<<<<<<<
  *         cdef vector[string] cpp_dict_paths
  *         if isinstance(dict_paths, list):
 */
-    __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+    __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 138, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_dict_paths);
     __Pyx_GIVEREF(__pyx_v_dict_paths);
-    if (__Pyx_PyList_SET_ITEM(__pyx_t_2, 0, __pyx_v_dict_paths) != (0)) __PYX_ERR(0, 137, __pyx_L1_error);
+    if (__Pyx_PyList_SET_ITEM(__pyx_t_2, 0, __pyx_v_dict_paths) != (0)) __PYX_ERR(0, 138, __pyx_L1_error);
     __Pyx_DECREF_SET(__pyx_v_dict_paths, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "automaton.pyx":136
+    /* "automaton.pyx":137
  * 
  *     def build(self, dict_paths=None):
  *         if isinstance(dict_paths, str):             # <<<<<<<<<<<<<<
@@ -5231,7 +5268,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
 */
   }
 
-  /* "automaton.pyx":139
+  /* "automaton.pyx":140
  *             dict_paths = [dict_paths]
  *         cdef vector[string] cpp_dict_paths
  *         if isinstance(dict_paths, list):             # <<<<<<<<<<<<<<
@@ -5241,7 +5278,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
   __pyx_t_1 = PyList_Check(__pyx_v_dict_paths); 
   if (__pyx_t_1) {
 
-    /* "automaton.pyx":140
+    /* "automaton.pyx":141
  *         cdef vector[string] cpp_dict_paths
  *         if isinstance(dict_paths, list):
  *             for dict_path in dict_paths:             # <<<<<<<<<<<<<<
@@ -5253,9 +5290,9 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
       __pyx_t_3 = 0;
       __pyx_t_4 = NULL;
     } else {
-      __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_dict_paths); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 140, __pyx_L1_error)
+      __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_dict_paths); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_4 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 140, __pyx_L1_error)
+      __pyx_t_4 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 141, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_4)) {
@@ -5263,7 +5300,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
           {
             Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_2);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 140, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 141, __pyx_L1_error)
             #endif
             if (__pyx_t_3 >= __pyx_temp) break;
           }
@@ -5273,7 +5310,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
           {
             Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_2);
             #if !CYTHON_ASSUME_SAFE_SIZE
-            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 140, __pyx_L1_error)
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 141, __pyx_L1_error)
             #endif
             if (__pyx_t_3 >= __pyx_temp) break;
           }
@@ -5284,13 +5321,13 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
           #endif
           ++__pyx_t_3;
         }
-        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 140, __pyx_L1_error)
+        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 141, __pyx_L1_error)
       } else {
         __pyx_t_5 = __pyx_t_4(__pyx_t_2);
         if (unlikely(!__pyx_t_5)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
-            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 140, __pyx_L1_error)
+            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 141, __pyx_L1_error)
             PyErr_Clear();
           }
           break;
@@ -5300,7 +5337,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
       __Pyx_XDECREF_SET(__pyx_v_dict_path, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "automaton.pyx":141
+      /* "automaton.pyx":142
  *         if isinstance(dict_paths, list):
  *             for dict_path in dict_paths:
  *                 cpp_dict_paths.push_back(dict_path.encode())             # <<<<<<<<<<<<<<
@@ -5314,19 +5351,19 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
         PyObject *__pyx_callargs[2] = {__pyx_t_6, NULL};
         __pyx_t_5 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_encode, __pyx_callargs+__pyx_t_7, (1-__pyx_t_7) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 141, __pyx_L1_error)
+        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 142, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
       }
-      __pyx_t_8 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_t_5); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_8 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_t_5); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 142, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       try {
         __pyx_v_cpp_dict_paths.push_back(__pyx_t_8);
       } catch(...) {
         __Pyx_CppExn2PyErr();
-        __PYX_ERR(0, 141, __pyx_L1_error)
+        __PYX_ERR(0, 142, __pyx_L1_error)
       }
 
-      /* "automaton.pyx":140
+      /* "automaton.pyx":141
  *         cdef vector[string] cpp_dict_paths
  *         if isinstance(dict_paths, list):
  *             for dict_path in dict_paths:             # <<<<<<<<<<<<<<
@@ -5336,7 +5373,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "automaton.pyx":139
+    /* "automaton.pyx":140
  *             dict_paths = [dict_paths]
  *         cdef vector[string] cpp_dict_paths
  *         if isinstance(dict_paths, list):             # <<<<<<<<<<<<<<
@@ -5345,7 +5382,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
 */
   }
 
-  /* "automaton.pyx":142
+  /* "automaton.pyx":143
  *             for dict_path in dict_paths:
  *                 cpp_dict_paths.push_back(dict_path.encode())
  *         self.autom.build(cpp_dict_paths)             # <<<<<<<<<<<<<<
@@ -5356,10 +5393,10 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
     __pyx_v_self->autom->build(__pyx_v_cpp_dict_paths);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 142, __pyx_L1_error)
+    __PYX_ERR(0, 143, __pyx_L1_error)
   }
 
-  /* "automaton.pyx":135
+  /* "automaton.pyx":136
  *         self.autom.reset(new_state)
  * 
  *     def build(self, dict_paths=None):             # <<<<<<<<<<<<<<
@@ -5384,7 +5421,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_22build(struct __pyx_obj_9Automa
   return __pyx_r;
 }
 
-/* "automaton.pyx":144
+/* "automaton.pyx":145
  *         self.autom.build(cpp_dict_paths)
  * 
  *     def load_dict(self, dict_path):             # <<<<<<<<<<<<<<
@@ -5431,32 +5468,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_dict_path,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 144, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 145, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 144, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 145, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "load_dict", 0) < 0) __PYX_ERR(0, 144, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "load_dict", 0) < 0) __PYX_ERR(0, 145, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("load_dict", 1, 1, 1, i); __PYX_ERR(0, 144, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("load_dict", 1, 1, 1, i); __PYX_ERR(0, 145, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 144, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 145, __pyx_L3_error)
     }
     __pyx_v_dict_path = values[0];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("load_dict", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 144, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("load_dict", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 145, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5490,7 +5527,7 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_24load_dict(struct __pyx_obj_9Au
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("load_dict", 0);
 
-  /* "automaton.pyx":145
+  /* "automaton.pyx":146
  * 
  *     def load_dict(self, dict_path):
  *         cdef cpp_dict_path = dict_path.encode()             # <<<<<<<<<<<<<<
@@ -5504,27 +5541,28 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_24load_dict(struct __pyx_obj_9Au
     PyObject *__pyx_callargs[2] = {__pyx_t_2, NULL};
     __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_encode, __pyx_callargs+__pyx_t_3, (1-__pyx_t_3) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
   __pyx_v_cpp_dict_path = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "automaton.pyx":146
+  /* "automaton.pyx":147
  *     def load_dict(self, dict_path):
  *         cdef cpp_dict_path = dict_path.encode()
  *         self.autom.load_dict(cpp_dict_path)             # <<<<<<<<<<<<<<
  * 
+ *     def cut(self, text):
 */
-  __pyx_t_4 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_v_cpp_dict_path); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_4 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_v_cpp_dict_path); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 147, __pyx_L1_error)
   try {
     __pyx_v_self->autom->load_dict(__PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_4));
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 146, __pyx_L1_error)
+    __PYX_ERR(0, 147, __pyx_L1_error)
   }
 
-  /* "automaton.pyx":144
+  /* "automaton.pyx":145
  *         self.autom.build(cpp_dict_paths)
  * 
  *     def load_dict(self, dict_path):             # <<<<<<<<<<<<<<
@@ -5547,6 +5585,196 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_24load_dict(struct __pyx_obj_9Au
   return __pyx_r;
 }
 
+/* "automaton.pyx":149
+ *         self.autom.load_dict(cpp_dict_path)
+ * 
+ *     def cut(self, text):             # <<<<<<<<<<<<<<
+ *         cdef vector[string] cpp_words = self.autom.cut(text.encode('utf-8'))
+ *         words = [word.decode() for word in cpp_words]
+*/
+
+/* Python wrapper */
+static PyObject *__pyx_pw_9Automaton_9Automaton_27cut(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+); /*proto*/
+static PyMethodDef __pyx_mdef_9Automaton_9Automaton_27cut = {"cut", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_27cut, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_9Automaton_9Automaton_27cut(PyObject *__pyx_v_self, 
+#if CYTHON_METH_FASTCALL
+PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
+#else
+PyObject *__pyx_args, PyObject *__pyx_kwds
+#endif
+) {
+  PyObject *__pyx_v_text = 0;
+  #if !CYTHON_METH_FASTCALL
+  CYTHON_UNUSED Py_ssize_t __pyx_nargs;
+  #endif
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject* values[1] = {0};
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("cut (wrapper)", 0);
+  #if !CYTHON_METH_FASTCALL
+  #if CYTHON_ASSUME_SAFE_SIZE
+  __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
+  #else
+  __pyx_nargs = PyTuple_Size(__pyx_args); if (unlikely(__pyx_nargs < 0)) return NULL;
+  #endif
+  #endif
+  __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
+  {
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_text,0};
+    const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 149, __pyx_L3_error)
+    if (__pyx_kwds_len > 0) {
+      switch (__pyx_nargs) {
+        case  1:
+        values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 149, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      const Py_ssize_t kwd_pos_args = __pyx_nargs;
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "cut", 0) < 0) __PYX_ERR(0, 149, __pyx_L3_error)
+      for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("cut", 1, 1, 1, i); __PYX_ERR(0, 149, __pyx_L3_error) }
+      }
+    } else if (unlikely(__pyx_nargs != 1)) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 149, __pyx_L3_error)
+    }
+    __pyx_v_text = values[0];
+  }
+  goto __pyx_L6_skip;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("cut", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 149, __pyx_L3_error)
+  __pyx_L6_skip:;
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_AddTraceback("Automaton.Automaton.cut", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_9Automaton_9Automaton_26cut(((struct __pyx_obj_9Automaton_Automaton *)__pyx_v_self), __pyx_v_text);
+
+  /* function exit code */
+  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
+    Py_XDECREF(values[__pyx_temp]);
+  }
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_9Automaton_9Automaton_26cut(struct __pyx_obj_9Automaton_Automaton *__pyx_v_self, PyObject *__pyx_v_text) {
+  std::vector<std::string>  __pyx_v_cpp_words;
+  PyObject *__pyx_v_words = NULL;
+  std::string __pyx_7genexpr__pyx_v_word;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  size_t __pyx_t_3;
+  std::string __pyx_t_4;
+  std::vector<std::string>  __pyx_t_5;
+  std::vector<std::string> ::iterator __pyx_t_6;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("cut", 0);
+
+  /* "automaton.pyx":150
+ * 
+ *     def cut(self, text):
+ *         cdef vector[string] cpp_words = self.autom.cut(text.encode('utf-8'))             # <<<<<<<<<<<<<<
+ *         words = [word.decode() for word in cpp_words]
+ *         return words
+*/
+  __pyx_t_2 = __pyx_v_text;
+  __Pyx_INCREF(__pyx_t_2);
+  __pyx_t_3 = 0;
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_mstate_global->__pyx_kp_u_utf_8};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_encode, __pyx_callargs+__pyx_t_3, (2-__pyx_t_3) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+  }
+  __pyx_t_4 = __pyx_convert_string_from_py_6libcpp_6string_std__in_string(__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 150, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  try {
+    __pyx_t_5 = __pyx_v_self->autom->cut(__PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_4));
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    __PYX_ERR(0, 150, __pyx_L1_error)
+  }
+  __pyx_v_cpp_words = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_5);
+
+  /* "automaton.pyx":151
+ *     def cut(self, text):
+ *         cdef vector[string] cpp_words = self.autom.cut(text.encode('utf-8'))
+ *         words = [word.decode() for word in cpp_words]             # <<<<<<<<<<<<<<
+ *         return words
+*/
+  { /* enter inner scope */
+    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_6 = __pyx_v_cpp_words.begin();
+    for (; __pyx_t_6 != __pyx_v_cpp_words.end(); ++__pyx_t_6) {
+      __pyx_t_4 = *__pyx_t_6;
+      __pyx_7genexpr__pyx_v_word = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_4);
+      __pyx_t_2 = __Pyx_decode_cpp_string(__pyx_7genexpr__pyx_v_word, 0, PY_SSIZE_T_MAX, NULL, NULL, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 151, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    }
+  } /* exit inner scope */
+  __pyx_v_words = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "automaton.pyx":152
+ *         cdef vector[string] cpp_words = self.autom.cut(text.encode('utf-8'))
+ *         words = [word.decode() for word in cpp_words]
+ *         return words             # <<<<<<<<<<<<<<
+*/
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_words);
+  __pyx_r = __pyx_v_words;
+  goto __pyx_L0;
+
+  /* "automaton.pyx":149
+ *         self.autom.load_dict(cpp_dict_path)
+ * 
+ *     def cut(self, text):             # <<<<<<<<<<<<<<
+ *         cdef vector[string] cpp_words = self.autom.cut(text.encode('utf-8'))
+ *         words = [word.decode() for word in cpp_words]
+*/
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_AddTraceback("Automaton.Automaton.cut", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_words);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
 /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
@@ -5554,15 +5782,15 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_24load_dict(struct __pyx_obj_9Au
 */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_9Automaton_9Automaton_27__reduce_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_9Automaton_9Automaton_29__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_9Automaton_9Automaton_27__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_27__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_9Automaton_9Automaton_27__reduce_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_9Automaton_9Automaton_29__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_29__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_9Automaton_9Automaton_29__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -5588,14 +5816,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   const Py_ssize_t __pyx_kwds_len = unlikely(__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
   if (unlikely(__pyx_kwds_len < 0)) return NULL;
   if (unlikely(__pyx_kwds_len > 0)) {__Pyx_RejectKeywords("__reduce_cython__", __pyx_kwds); return NULL;}
-  __pyx_r = __pyx_pf_9Automaton_9Automaton_26__reduce_cython__(((struct __pyx_obj_9Automaton_Automaton *)__pyx_v_self));
+  __pyx_r = __pyx_pf_9Automaton_9Automaton_28__reduce_cython__(((struct __pyx_obj_9Automaton_Automaton *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_9Automaton_9Automaton_26__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_9Automaton_Automaton *__pyx_v_self) {
+static PyObject *__pyx_pf_9Automaton_9Automaton_28__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_9Automaton_Automaton *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -5635,15 +5863,15 @@ static PyObject *__pyx_pf_9Automaton_9Automaton_26__reduce_cython__(CYTHON_UNUSE
 */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_9Automaton_9Automaton_29__setstate_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_9Automaton_9Automaton_31__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_9Automaton_9Automaton_29__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_29__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_9Automaton_9Automaton_29__setstate_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_9Automaton_9Automaton_31__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_31__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_9Automaton_9Automaton_31__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -5709,7 +5937,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_9Automaton_9Automaton_28__setstate_cython__(((struct __pyx_obj_9Automaton_Automaton *)__pyx_v_self), __pyx_v___pyx_state);
+  __pyx_r = __pyx_pf_9Automaton_9Automaton_30__setstate_cython__(((struct __pyx_obj_9Automaton_Automaton *)__pyx_v_self), __pyx_v___pyx_state);
 
   /* function exit code */
   for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
@@ -5719,7 +5947,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_9Automaton_9Automaton_28__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_9Automaton_Automaton *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_9Automaton_9Automaton_30__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_9Automaton_Automaton *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -5810,8 +6038,9 @@ static PyMethodDef __pyx_methods_9Automaton_Automaton[] = {
   {"reset", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_21reset, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
   {"build", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_23build, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
   {"load_dict", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_25load_dict, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_27__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_29__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"cut", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_27cut, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__reduce_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_29__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__setstate_cython__", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_9Automaton_9Automaton_31__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 #if CYTHON_USE_TYPE_SPECS
@@ -5962,23 +6191,23 @@ static int __Pyx_modinit_type_init_code(__pyx_mstatetype *__pyx_mstate) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_mstate->__pyx_ptype_9Automaton_Automaton = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_9Automaton_Automaton_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_9Automaton_Automaton)) __PYX_ERR(0, 41, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_9Automaton_Automaton_spec, __pyx_mstate->__pyx_ptype_9Automaton_Automaton) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
+  __pyx_mstate->__pyx_ptype_9Automaton_Automaton = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_9Automaton_Automaton_spec, NULL); if (unlikely(!__pyx_mstate->__pyx_ptype_9Automaton_Automaton)) __PYX_ERR(0, 42, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_9Automaton_Automaton_spec, __pyx_mstate->__pyx_ptype_9Automaton_Automaton) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
   #else
   __pyx_mstate->__pyx_ptype_9Automaton_Automaton = &__pyx_type_9Automaton_Automaton;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_9Automaton_Automaton) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_mstate->__pyx_ptype_9Automaton_Automaton) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_mstate->__pyx_ptype_9Automaton_Automaton->tp_dictoffset && __pyx_mstate->__pyx_ptype_9Automaton_Automaton->tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_mstate->__pyx_ptype_9Automaton_Automaton->tp_getattro = PyObject_GenericGetAttr;
   }
   #endif
-  if (PyObject_SetAttr(__pyx_m, __pyx_mstate_global->__pyx_n_u_Automaton, (PyObject *) __pyx_mstate->__pyx_ptype_9Automaton_Automaton) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject *) __pyx_mstate->__pyx_ptype_9Automaton_Automaton) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_mstate_global->__pyx_n_u_Automaton, (PyObject *) __pyx_mstate->__pyx_ptype_9Automaton_Automaton) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject *) __pyx_mstate->__pyx_ptype_9Automaton_Automaton) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -6296,170 +6525,182 @@ __Pyx_RefNannySetupContext("PyInit_Automaton", 0);
   (void)__Pyx_modinit_function_import_code(__pyx_mstate);
   /*--- Execution code ---*/
 
-  /* "automaton.pyx":52
+  /* "automaton.pyx":53
  *         del self.autom
  * 
  *     def insert(self, s, freq = 1):             # <<<<<<<<<<<<<<
  *         cdef string cpp_string = s.encode()
  *         self.autom.insert(cpp_string, freq)
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_5insert, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_insert, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_5insert, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_insert, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_2, __pyx_mstate_global->__pyx_tuple[0]);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_insert, __pyx_t_2) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_insert, __pyx_t_2) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":56
+  /* "automaton.pyx":57
  *         self.autom.insert(cpp_string, freq)
  * 
  *     def word_count(self) -> int:             # <<<<<<<<<<<<<<
  *         return self.autom.word_count()
  * 
 */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_int) < 0) __PYX_ERR(0, 56, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_7word_count, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_word_count, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 56, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_int) < 0) __PYX_ERR(0, 57, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_7word_count, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_word_count, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_word_count, __pyx_t_3) < 0) __PYX_ERR(0, 56, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_word_count, __pyx_t_3) < 0) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "automaton.pyx":59
+  /* "automaton.pyx":60
  *         return self.autom.word_count()
  * 
  *     def get_node(self, node_id) -> dict:             # <<<<<<<<<<<<<<
  *         cdef Node node = self.autom.get_node(node_id)
  *         node_dict = {
 */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_dict) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_9get_node, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_get_node, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_dict) < 0) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_9get_node, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_get_node, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_get_node, __pyx_t_2) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_get_node, __pyx_t_2) < 0) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":73
+  /* "automaton.pyx":74
  *         return node_dict
  * 
  *     def get_keyword(self, node_id) -> str:             # <<<<<<<<<<<<<<
  *         return self.autom.get_keyword(node_id).decode('utf-8')
  * 
 */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_str) < 0) __PYX_ERR(0, 73, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_11get_keyword, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_get_keyword, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 73, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_str) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_11get_keyword, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_get_keyword, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_get_keyword, __pyx_t_3) < 0) __PYX_ERR(0, 73, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_get_keyword, __pyx_t_3) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "automaton.pyx":76
+  /* "automaton.pyx":77
  *         return self.autom.get_keyword(node_id).decode('utf-8')
  * 
  *     def trans_string(self, s) -> dict:             # <<<<<<<<<<<<<<
  *         cdef string cpp_string = s.encode()
  *         cdef Node node = self.autom.trans_string(cpp_string)
 */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_dict) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_13trans_string, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_trans_string, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_return, __pyx_mstate_global->__pyx_n_u_dict) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_13trans_string, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_trans_string, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_trans_string, __pyx_t_2) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_trans_string, __pyx_t_2) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":91
+  /* "automaton.pyx":92
  *         return node_dict
  * 
  *     def trans_byte(self, byte):             # <<<<<<<<<<<<<<
  *         cdef uint8_t cpp_byte = byte
  *         cdef Node node = self.autom.trans_byte(cpp_byte)
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_15trans_byte, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_trans_byte, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_15trans_byte, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_trans_byte, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_trans_byte, __pyx_t_2) < 0) __PYX_ERR(0, 91, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_trans_byte, __pyx_t_2) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":106
+  /* "automaton.pyx":107
  *         return node_dict
  * 
  *     def get_borders(self, node_id):             # <<<<<<<<<<<<<<
  *         cdef size_t cpp_node_id = node_id
  *         cdef vector[Node] borders = self.autom.get_borders(cpp_node_id)
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_17get_borders, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_get_borders, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_17get_borders, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_get_borders, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_get_borders, __pyx_t_2) < 0) __PYX_ERR(0, 106, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_get_borders, __pyx_t_2) < 0) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":124
+  /* "automaton.pyx":125
  *         return res
  * 
  *     def get_keywords(self, s):             # <<<<<<<<<<<<<<
  *         cdef string cpp_string = s.encode()
  *         cdef vector[string] keywords = self.autom.get_keywords(cpp_string)
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_19get_keywords, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_get_keywords, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[7])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 124, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_19get_keywords, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_get_keywords, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[7])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_get_keywords, __pyx_t_2) < 0) __PYX_ERR(0, 124, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_get_keywords, __pyx_t_2) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":132
+  /* "automaton.pyx":133
  *         return res
  * 
  *     def reset(self, new_state = ROOT):             # <<<<<<<<<<<<<<
  *         self.autom.reset(new_state)
  * 
 */
-  __pyx_t_2 = __Pyx_PyLong_FromSize_t(automaton::ROOT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_FromSize_t(automaton::ROOT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_mstate_global->__pyx_k_ = __pyx_t_2;
   __Pyx_GIVEREF(__pyx_t_2);
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyLong_FromSize_t(automaton::ROOT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_FromSize_t(automaton::ROOT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyTuple_Pack(1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_Pack(1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_21reset, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_reset, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[8])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_21reset, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_reset, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[8])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_reset, __pyx_t_2) < 0) __PYX_ERR(0, 132, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_reset, __pyx_t_2) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":135
+  /* "automaton.pyx":136
  *         self.autom.reset(new_state)
  * 
  *     def build(self, dict_paths=None):             # <<<<<<<<<<<<<<
  *         if isinstance(dict_paths, str):
  *             dict_paths = [dict_paths]
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_23build, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_build, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[9])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_23build, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_build, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[9])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 136, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_2, __pyx_mstate_global->__pyx_tuple[1]);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_build, __pyx_t_2) < 0) __PYX_ERR(0, 135, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_build, __pyx_t_2) < 0) __PYX_ERR(0, 136, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "automaton.pyx":144
+  /* "automaton.pyx":145
  *         self.autom.build(cpp_dict_paths)
  * 
  *     def load_dict(self, dict_path):             # <<<<<<<<<<<<<<
  *         cdef cpp_dict_path = dict_path.encode()
  *         self.autom.load_dict(cpp_dict_path)
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_25load_dict, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_load_dict, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[10])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_25load_dict, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_load_dict, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[10])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_load_dict, __pyx_t_2) < 0) __PYX_ERR(0, 144, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_load_dict, __pyx_t_2) < 0) __PYX_ERR(0, 145, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "automaton.pyx":149
+ *         self.autom.load_dict(cpp_dict_path)
+ * 
+ *     def cut(self, text):             # <<<<<<<<<<<<<<
+ *         cdef vector[string] cpp_words = self.autom.cut(text.encode('utf-8'))
+ *         words = [word.decode() for word in cpp_words]
+*/
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_27cut, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton_cut, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[11])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_9Automaton_Automaton, __pyx_mstate_global->__pyx_n_u_cut, __pyx_t_2) < 0) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "(tree fragment)":1
@@ -6467,7 +6708,7 @@ __Pyx_RefNannySetupContext("PyInit_Automaton", 0);
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
  * def __setstate_cython__(self, __pyx_state):
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_27__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton___reduce_cython, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[11])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_29__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton___reduce_cython, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[12])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_reduce_cython, __pyx_t_2) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -6478,7 +6719,7 @@ __Pyx_RefNannySetupContext("PyInit_Automaton", 0);
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "no default __reduce__ due to non-trivial __cinit__"
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_29__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton___setstate_cython, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[12])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9Automaton_9Automaton_31__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Automaton___setstate_cython, NULL, __pyx_mstate_global->__pyx_n_u_Automaton, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[13])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_setstate_cython, __pyx_t_2) < 0) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -6556,6 +6797,7 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_Automaton___reduce_cython, sizeof(__pyx_k_Automaton___reduce_cython), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Automaton___reduce_cython */
   {__pyx_k_Automaton___setstate_cython, sizeof(__pyx_k_Automaton___setstate_cython), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Automaton___setstate_cython */
   {__pyx_k_Automaton_build, sizeof(__pyx_k_Automaton_build), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Automaton_build */
+  {__pyx_k_Automaton_cut, sizeof(__pyx_k_Automaton_cut), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Automaton_cut */
   {__pyx_k_Automaton_get_borders, sizeof(__pyx_k_Automaton_get_borders), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Automaton_get_borders */
   {__pyx_k_Automaton_get_keyword, sizeof(__pyx_k_Automaton_get_keyword), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Automaton_get_keyword */
   {__pyx_k_Automaton_get_keywords, sizeof(__pyx_k_Automaton_get_keywords), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Automaton_get_keywords */
@@ -6579,6 +6821,8 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_cpp_dict_paths, sizeof(__pyx_k_cpp_dict_paths), 0, 1, 1}, /* PyObject cname: __pyx_n_u_cpp_dict_paths */
   {__pyx_k_cpp_node_id, sizeof(__pyx_k_cpp_node_id), 0, 1, 1}, /* PyObject cname: __pyx_n_u_cpp_node_id */
   {__pyx_k_cpp_string, sizeof(__pyx_k_cpp_string), 0, 1, 1}, /* PyObject cname: __pyx_n_u_cpp_string */
+  {__pyx_k_cpp_words, sizeof(__pyx_k_cpp_words), 0, 1, 1}, /* PyObject cname: __pyx_n_u_cpp_words */
+  {__pyx_k_cut, sizeof(__pyx_k_cut), 0, 1, 1}, /* PyObject cname: __pyx_n_u_cut */
   {__pyx_k_dict, sizeof(__pyx_k_dict), 0, 1, 1}, /* PyObject cname: __pyx_n_u_dict */
   {__pyx_k_dict_path, sizeof(__pyx_k_dict_path), 0, 1, 1}, /* PyObject cname: __pyx_n_u_dict_path */
   {__pyx_k_dict_paths, sizeof(__pyx_k_dict_paths), 0, 1, 1}, /* PyObject cname: __pyx_n_u_dict_paths */
@@ -6633,9 +6877,13 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_str, sizeof(__pyx_k_str), 0, 1, 1}, /* PyObject cname: __pyx_n_u_str */
   {__pyx_k_stringsource, sizeof(__pyx_k_stringsource), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_stringsource */
   {__pyx_k_test, sizeof(__pyx_k_test), 0, 1, 1}, /* PyObject cname: __pyx_n_u_test */
+  {__pyx_k_text, sizeof(__pyx_k_text), 0, 1, 1}, /* PyObject cname: __pyx_n_u_text */
   {__pyx_k_trans_byte, sizeof(__pyx_k_trans_byte), 0, 1, 1}, /* PyObject cname: __pyx_n_u_trans_byte */
   {__pyx_k_trans_string, sizeof(__pyx_k_trans_string), 0, 1, 1}, /* PyObject cname: __pyx_n_u_trans_string */
+  {__pyx_k_utf_8, sizeof(__pyx_k_utf_8), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_utf_8 */
+  {__pyx_k_word, sizeof(__pyx_k_word), 0, 1, 1}, /* PyObject cname: __pyx_n_u_word */
   {__pyx_k_word_count, sizeof(__pyx_k_word_count), 0, 1, 1}, /* PyObject cname: __pyx_n_u_word_count */
+  {__pyx_k_words, sizeof(__pyx_k_words), 0, 1, 1}, /* PyObject cname: __pyx_n_u_words */
   {0, 0, 0, 0, 0}
 };
 /* InitStrings.proto */
@@ -6657,25 +6905,25 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "automaton.pyx":52
+  /* "automaton.pyx":53
  *         del self.autom
  * 
  *     def insert(self, s, freq = 1):             # <<<<<<<<<<<<<<
  *         cdef string cpp_string = s.encode()
  *         self.autom.insert(cpp_string, freq)
 */
-  __pyx_mstate_global->__pyx_tuple[0] = PyTuple_Pack(1, __pyx_mstate_global->__pyx_int_1); if (unlikely(!__pyx_mstate_global->__pyx_tuple[0])) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[0] = PyTuple_Pack(1, __pyx_mstate_global->__pyx_int_1); if (unlikely(!__pyx_mstate_global->__pyx_tuple[0])) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[0]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[0]);
 
-  /* "automaton.pyx":135
+  /* "automaton.pyx":136
  *         self.autom.reset(new_state)
  * 
  *     def build(self, dict_paths=None):             # <<<<<<<<<<<<<<
  *         if isinstance(dict_paths, str):
  *             dict_paths = [dict_paths]
 */
-  __pyx_mstate_global->__pyx_tuple[1] = PyTuple_Pack(1, Py_None); if (unlikely(!__pyx_mstate_global->__pyx_tuple[1])) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[1] = PyTuple_Pack(1, Py_None); if (unlikely(!__pyx_mstate_global->__pyx_tuple[1])) __PYX_ERR(0, 136, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[1]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[1]);
   __Pyx_RefNannyFinishContext();
@@ -6722,69 +6970,74 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
   PyObject* tuple_dedup_map = PyDict_New();
   if (unlikely(!tuple_dedup_map)) return -1;
   {
-    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 52, 27};
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 53, 27};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_s, __pyx_mstate->__pyx_n_u_freq, __pyx_mstate->__pyx_n_u_cpp_string};
     __pyx_mstate_global->__pyx_codeobj_tab[0] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_insert, __pyx_k_q_F_a, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[0])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 56, 16};
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 57, 16};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
     __pyx_mstate_global->__pyx_codeobj_tab[1] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_word_count, __pyx_k_A_t6_A, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[1])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 59, 82};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 60, 82};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_node_id, __pyx_mstate->__pyx_n_u_node, __pyx_mstate->__pyx_n_u_node_dict};
     __pyx_mstate_global->__pyx_codeobj_tab[2] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_get_node, __pyx_k_1_V9AQ_4q_a_t1_d_a_4q_D_d_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[2])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 73, 24};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 74, 24};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_node_id};
     __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_get_keyword, __pyx_k_a_t6_QhgQa, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 76, 91};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 77, 91};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_s, __pyx_mstate->__pyx_n_u_cpp_string, __pyx_mstate->__pyx_n_u_node, __pyx_mstate->__pyx_n_u_node_dict};
     __pyx_mstate_global->__pyx_codeobj_tab[4] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_trans_string, __pyx_k_V_4q_a_t1_d_a_4q_D_d_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[4])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 91, 84};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 92, 84};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_byte, __pyx_mstate->__pyx_n_u_cpp_byte, __pyx_mstate->__pyx_n_u_node, __pyx_mstate->__pyx_n_u_node_dict};
     __pyx_mstate_global->__pyx_codeobj_tab[5] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_trans_byte, __pyx_k_A_V_aq_4q_a_t1_d_a_4q_D_d_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[5])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 7, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 106, 105};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 7, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 107, 105};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_node_id, __pyx_mstate->__pyx_n_u_cpp_node_id, __pyx_mstate->__pyx_n_u_borders, __pyx_mstate->__pyx_n_u_res, __pyx_mstate->__pyx_n_u_node, __pyx_mstate->__pyx_n_u_node_dict};
     __pyx_mstate_global->__pyx_codeobj_tab[6] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_get_borders, __pyx_k_A_D_l_1_a_HA_t1_d_4q_a_d_t1_A_a, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[6])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 6, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 124, 56};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 6, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 125, 56};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_s, __pyx_mstate->__pyx_n_u_cpp_string, __pyx_mstate->__pyx_n_u_keywords, __pyx_mstate->__pyx_n_u_res, __pyx_mstate->__pyx_n_u_keyword};
     __pyx_mstate_global->__pyx_codeobj_tab[7] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_get_keywords, __pyx_k_A_t6_aq_a_Kq_wawgQa_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[7])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 132, 16};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 133, 16};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_new_state};
     __pyx_mstate_global->__pyx_codeobj_tab[8] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_reset, __pyx_k_F, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[8])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 135, 65};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 136, 65};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_dict_paths, __pyx_mstate->__pyx_n_u_cpp_dict_paths, __pyx_mstate->__pyx_n_u_dict_path};
     __pyx_mstate_global->__pyx_codeobj_tab[9] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_build, __pyx_k_q_Ql_Ql_Q_j_F, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[9])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 144, 22};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 145, 22};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_dict_path, __pyx_mstate->__pyx_n_u_cpp_dict_path};
     __pyx_mstate_global->__pyx_codeobj_tab[10] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_load_dict, __pyx_k_A_YgQ_F_AQ, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[10])) goto bad;
   }
   {
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 149, 43};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_text, __pyx_mstate->__pyx_n_u_cpp_words, __pyx_mstate->__pyx_n_u_words, __pyx_mstate->__pyx_n_u_word};
+    __pyx_mstate_global->__pyx_codeobj_tab[11] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_automaton_pyx, __pyx_mstate->__pyx_n_u_cut, __pyx_k_A_F_at7_1_WCt81_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[11])) goto bad;
+  }
+  {
     const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 1, 9};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
-    __pyx_mstate_global->__pyx_codeobj_tab[11] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_reduce_cython, __pyx_k_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[11])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[12] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_reduce_cython, __pyx_k_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[12])) goto bad;
   }
   {
     const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 3, 9};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_pyx_state};
-    __pyx_mstate_global->__pyx_codeobj_tab[12] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_setstate_cython, __pyx_k_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[12])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[13] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_stringsource, __pyx_mstate->__pyx_n_u_setstate_cython, __pyx_k_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[13])) goto bad;
   }
   Py_DECREF(tuple_dedup_map);
   return 0;

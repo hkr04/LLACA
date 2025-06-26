@@ -37,6 +37,7 @@ cdef extern from "src/automaton.h" namespace "automaton":
         void reset(size_t new_state) except +
         void build(vector[string] dict_paths) except +
         void load_dict(string dict_path) except +
+        vector[string] cut(string text) except +
 
 cdef class Automaton:
     cdef AutomatonImpl* autom
@@ -144,4 +145,8 @@ cdef class Automaton:
     def load_dict(self, dict_path):
         cdef cpp_dict_path = dict_path.encode()
         self.autom.load_dict(cpp_dict_path)
-        
+
+    def cut(self, text):
+        cdef vector[string] cpp_words = self.autom.cut(text.encode('utf-8'))
+        words = [word.decode() for word in cpp_words]
+        return words

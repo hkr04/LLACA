@@ -101,6 +101,14 @@ def cut(ac: Automaton, text: str, delim=None, unigram=False, return_prob=False):
 
     return (cuts, max_prob) if return_prob else cuts
 
+def cut_cpp(ac: Automaton, text: str, delim=None):
+    words = ac.cut(text)
+    
+    if delim:
+        words = delim.join(words)
+
+    return words
+
 def cutf(ac: Automaton, input_path: str, output_path: str, delim=" ", unigram=False):
     with open(input_path, "r", encoding="utf-8") as f:
         lines = f.readlines()
@@ -110,6 +118,7 @@ def cutf(ac: Automaton, input_path: str, output_path: str, delim=" ", unigram=Fa
 
     for line in lines:
         res += cut(ac, line, delim=delim, unigram=unigram)
+        # res += cut_cpp(ac, line, delim=delim)
 
     dir_path = os.path.dirname(output_path)
 
