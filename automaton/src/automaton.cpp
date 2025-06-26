@@ -26,18 +26,7 @@ static size_t count_utf8_chars(const std::string& s) {
             // 4-byte: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
             char_len = 4;
         } else {
-            return -1; // Invalid first byte
-        }
-
-        if (i + char_len > len) {
-            return -1; // Not enough bytes
-        }
-
-        // Check continuation bytes: must be of form 10xxxxxx
-        for (size_t j = 1; j < char_len; ++j) {
-            if ((static_cast<uint8_t>(s[i + j]) & 0xC0) != 0x80) {
-                return -1; // Invalid continuation byte
-            }
+            return INVALID_UTF8;
         }
 
         i += char_len;
@@ -47,19 +36,26 @@ static size_t count_utf8_chars(const std::string& s) {
     return count;
 }
 
-void Automaton::insert(const std::string& s, uint64_t freq) {
+size_t Automaton::memory_usage() const {
+    size_t total = 0;
+    total += sizeof(*this);
+    total += t.capacity() * sizeof(Node);
+    return total;
+}
+
+void Automaton::insert(const std::string& s, uint32_t freq) {
     auto length = count_utf8_chars(s);
 
     if (length == INVALID_UTF8) {
         throw std::invalid_argument("Invalid UTF-8 string: " + s);
     }
 
-    size_t u = ROOT;
+    auto u = ROOT;
 
     for (uint8_t byte : s) {
         uint8_t half_byte = byte >> OFFSET; // Upper 4 bits
 
-        if (!t[u].ch[half_byte] || get_node(t[u].ch[half_byte]).parent != u) {
+        if (!t[u].ch[half_byte] || t[t[u].ch[half_byte]].parent != u) {
             t.emplace_back(++_node_count, u);
             t[u].ch[half_byte] = _node_count;
         }
@@ -68,7 +64,7 @@ void Automaton::insert(const std::string& s, uint64_t freq) {
         
         half_byte = byte & MASK; // Lower 4 bits
 
-        if (!t[u].ch[half_byte] || get_node(t[u].ch[half_byte]).parent != u) {
+        if (!t[u].ch[half_byte] || t[t[u].ch[half_byte]].parent != u) {
             t.emplace_back(++_node_count, u);
             t[u].ch[half_byte] = _node_count;
         }
@@ -79,19 +75,27 @@ void Automaton::insert(const std::string& s, uint64_t freq) {
     if (t[u].end == 0) { // New keyword
         _word_count++;
     }
-        
+
+    if (1ll * t[u].end + freq > MAX_FREQ) {
+        throw std::overflow_error("Frequency overflow");
+    }
+
+    if (length > MAX_UTF8_LEN) {
+        throw std::overflow_error("UTF-8 length overflow");
+    }
+
     t[u].end += freq;
     t[u].length = length;
 }
 
 void Automaton::get_trie_sum() {
     // Initialize prefix sum
-    for (size_t i = 0; i <= _node_count; i++) {
-        t[i].trie_sum = t[i].end;
+    for (auto& node : t) {
+        node.trie_sum = node.end;
     }
 
     // Update the Trie from bottom to top
-    for (size_t i = _node_count; i >= 0; i--) {
+    for (auto i = _node_count; i >= 0; i--) {
         t[t[i].parent].trie_sum += t[i].trie_sum;
         t[i].log_end = log2(t[i].end);
         t[i].log_trie_sum = log2(t[i].trie_sum);
@@ -100,20 +104,20 @@ void Automaton::get_trie_sum() {
 }
 
 void Automaton::get_fail() {
-    std::queue<size_t> q;
+    std::queue<uint32_t> q;
 
-    for (size_t i = 0; i < SIZE; i++) {
-        size_t v = t[ROOT].ch[i];
+    for (uint32_t i = 0; i < SIZE; i++) {
+        auto v = t[ROOT].ch[i];
         if (v && t[v].parent == ROOT) {
             q.push(v);
         } 
     }
 
     while (!q.empty()) {
-        size_t u = q.front();
+        auto u = q.front();
         q.pop();
-        for (size_t i = 0; i < SIZE; i++) {
-            size_t v = t[u].ch[i];
+        for (uint32_t i = 0; i < SIZE; i++) {
+            auto v = t[u].ch[i];
             if (v && t[v].parent == u) {
                 t[v].fail = t[t[u].fail].ch[i];
                 q.push(v);
@@ -128,7 +132,7 @@ void Automaton::load_dict(const std::string& dict_path) {
     std::ifstream fin;
     std::string line;
     std::string keyword;
-    uint64_t freq;
+    uint32_t freq;
 
     fin.open(dict_path, std::ifstream::in);
     if (!fin.is_open()) {
@@ -147,10 +151,13 @@ void Automaton::load_dict(const std::string& dict_path) {
 }
 
 void Automaton::build() {
+    // Shrink the vector to fit the actual size
+    t.shrink_to_fit();
+
     get_trie_sum();
 
-    for (size_t i = 1; i <= _node_count; i++) {
-        size_t pre = t[i].pre;
+    for (uint32_t i = 1; i <= _node_count; i++) {
+        auto pre = t[i].pre;
         while (pre != ROOT && t[pre].end == 0) { // Path compression, point to the last end state
             pre = t[pre].pre;
         }
@@ -159,9 +166,9 @@ void Automaton::build() {
 
     get_fail();
 
-    for (size_t i = 1; i <= _node_count; i++) {
-        size_t pre = t[i].fail;
-        while (pre != ROOT && t[pre].end == 0) { // Path compression, point to the last valid utf-8 state
+    for (uint32_t i = 1; i <= _node_count; i++) {
+        auto pre = t[i].fail;
+        while (pre != ROOT && t[pre].end == 0) { // Path compression, point to the last end state
             pre = t[pre].fail;
         }
         t[i].fail = pre;
@@ -184,6 +191,7 @@ Automaton::Automaton() {
     _word_count = 0;
     _node_count = 0;
     _cur_state = ROOT;
+    t.reserve(INIT_SIZE);
     t.emplace_back(ROOT);
 }
 
@@ -191,6 +199,7 @@ Automaton::Automaton(const std::string& dict_path) {
     _word_count = 0;
     _node_count = 0;
     _cur_state = ROOT;
+    t.reserve(INIT_SIZE);
     t.emplace_back(ROOT);
     build(dict_path);
 }
@@ -199,22 +208,23 @@ Automaton::Automaton(const std::vector<std::string>& dict_paths) {
     _word_count = 0;
     _node_count = 0;
     _cur_state = ROOT;
+    t.reserve(INIT_SIZE);
     t.emplace_back(ROOT);
     build(dict_paths);
 }
 
-size_t Automaton::word_count() const {
+uint32_t Automaton::word_count() const {
     return _word_count;
 }
 
-Node Automaton::get_node(size_t node_id) const {
+Node Automaton::get_node(uint32_t node_id) const {
     if (node_id >= t.size()) {
         throw std::out_of_range("Node ID out of range");
     }
     return t[node_id];
 }
 
-std::vector<Node> Automaton::get_borders(size_t node_id) {
+std::vector<Node> Automaton::get_borders(uint32_t node_id) {
     std::vector<Node> borders;
     Node unode = get_node(node_id);
     while (unode.id != ROOT) {
@@ -224,12 +234,12 @@ std::vector<Node> Automaton::get_borders(size_t node_id) {
     return borders;
 }
 
-size_t Automaton::get_state() const {
+uint32_t Automaton::get_state() const {
     return _cur_state;
 }
 
 Node Automaton::trans_string(const std::string& s) {
-    size_t u = _cur_state;
+    auto u = _cur_state;
     for (uint8_t byte : s) {
         uint8_t half_byte = byte >> OFFSET;
         u = t[u].ch[half_byte];
@@ -241,7 +251,7 @@ Node Automaton::trans_string(const std::string& s) {
 }
 
 Node Automaton::trans_byte(uint8_t byte) {
-    size_t u = _cur_state;
+    auto u = _cur_state;
     uint8_t half_byte = byte >> OFFSET;
     u = t[u].ch[half_byte];
     half_byte = byte & MASK;
@@ -250,7 +260,7 @@ Node Automaton::trans_byte(uint8_t byte) {
     return t[u];
 }
 
-void Automaton::reset(size_t new_state) {
+void Automaton::reset(uint32_t new_state) {
     _cur_state = new_state;
 }
 
@@ -259,7 +269,7 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
         return {};
     }
 
-    size_t n = text.size();
+    auto n = text.size();
     auto min_prob = -get_node(0).log_trie_sum;
 
     std::vector<float> max_prob; // char
@@ -277,7 +287,7 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
     
     while (i < n) {
         uint8_t byte = static_cast<uint8_t>(text[i]);
-        size_t char_len = 0;
+        uint8_t char_len = 0;
         if ((byte & 0x80) == 0x00) {
             // 1-byte ASCII: 0xxxxxxx
             char_len = 1;
@@ -300,7 +310,7 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
             throw std::invalid_argument("Invalid UTF-8 string: " + text);
         }
         
-        for (size_t k = 0; k < char_len; k++) {
+        for (uint8_t k = 0; k < char_len; k++) {
             trans_byte(static_cast<uint8_t>(text[i + k]));
         }
 

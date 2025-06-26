@@ -1,3 +1,5 @@
+// g++ test.cpp automaton.cpp -std=c++17
+
 #include "automaton.h"
 
 int main() {
@@ -12,6 +14,8 @@ int main() {
     }
 
     std::cout << std::endl;
+
+    std::cout << "Memory usage: " << automaton.memory_usage() << " bytes" << std::endl;
     
     return 0;
 }

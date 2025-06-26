@@ -8,33 +8,31 @@ cdef extern from "stdint.h":
     ctypedef unsigned char uint8_t
     ctypedef unsigned int uint32_t
     ctypedef unsigned long long uint64_t
-    ctypedef size_t size_t
-    ctypedef uint8_t uint8_t
 
 cdef extern from "src/automaton.h" namespace "automaton":
-    const size_t ROOT
+    const uint32_t ROOT
 
     cdef cppclass Node "automaton::Node":
+        uint8_t length
         uint32_t end
-        uint64_t trie_sum
+        uint32_t id
+        uint32_t pre
+        uint32_t fail
         float log_end
         float log_trie_sum
-        size_t id
-        size_t pre
-        size_t fail
-        uint8_t length
+        uint64_t trie_sum
 
     cdef cppclass AutomatonImpl "automaton::Automaton":
         AutomatonImpl() except +
         AutomatonImpl(string dict_path) except +
         AutomatonImpl(vector[string] dict_paths) except +
         void insert(string s, uint64_t freq) except +
-        size_t word_count() except +
-        Node get_node(size_t node_id) except +
+        uint32_t word_count() except +
+        Node get_node(uint32_t node_id) except +
         Node trans_string(string s) except +
         Node trans_byte(uint8_t byte) except +
-        vector[Node] get_borders(size_t node_id) except +
-        void reset(size_t new_state) except +
+        vector[Node] get_borders(uint32_t node_id) except +
+        void reset(uint32_t new_state) except +
         void build(vector[string] dict_paths) except +
         void load_dict(string dict_path) except +
         vector[string] cut(string text) except +
@@ -102,7 +100,7 @@ cdef class Automaton:
         return node_dict
 
     def get_borders(self, node_id):
-        cdef size_t cpp_node_id = node_id
+        cdef uint32_t cpp_node_id = node_id
         cdef vector[Node] borders = self.autom.get_borders(cpp_node_id)
         res = []
         for node in borders:

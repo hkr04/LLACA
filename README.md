@@ -57,13 +57,13 @@ Then you can get a result like this:
 ```
 ====================== Benchmark Summary ======================
 Dataset         F1 Score (%)    Build Time (s)  Cut Time (s)   
-as              90.9            0.227           0.836          
-cityu           88.6            0.087           0.250          
-msr             93.7            0.188           0.683          
-pku             90.4            0.084           0.620          
-kwdlc           91.0            0.030           0.249          
-ud_ja           89.5            0.024           0.081          
-best            93.6            0.080           0.407           
+as              90.9            0.155           0.839          
+cityu           88.6            0.066           0.253          
+msr             93.7            0.132           0.687          
+pku             90.4            0.052           0.616          
+kwdlc           91.0            0.018           0.242          
+ud_ja           89.5            0.014           0.078          
+best            93.6            0.049           0.398         
 ```
 
 ## Run Demo
