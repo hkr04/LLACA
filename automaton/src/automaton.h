@@ -19,15 +19,15 @@ static const size_t ROOT = 0;
 static const size_t INVALID_UTF8 = -1;
 
 struct Node {
-    uint64_t end = 0, end_utf8 = 0, prefix_sum = 0;
-    double log_end = 0, log_prefix_sum = 0;
+    uint32_t end = 0;
+    uint64_t trie_sum = 0;
+    float log_end = 0, log_trie_sum = 0;
     size_t ch[SIZE] = {0};
     size_t id = ROOT, parent = ROOT, pre = ROOT, fail = ROOT;
-    size_t length = 0;
-    uint8_t data = 0;
-    
+    uint8_t length = 0;
+
     Node() = default;
-    Node(size_t id, size_t parent = ROOT, uint8_t data = 0) : id(id), parent(parent), pre(parent), data(data) {}
+    Node(size_t id, size_t parent = ROOT) : id(id), parent(parent), pre(parent) {}
 };
 
 class Automaton {
@@ -37,7 +37,7 @@ private:
     size_t _cur_state; // Current state
     
     std::vector<Node> t; // Trie nodes
-    void get_prefix_sum(); // Calculate word frequencies in sub-Tries for each node
+    void get_trie_sum(); // Calculate word frequencies in sub-Tries for each node
     void get_fail(); // Calculate the fail pointer for each node
 
 public:
@@ -65,20 +65,8 @@ public:
     // Get the current state of the automaton
     size_t get_state() const;
 
-    // Get the keyword associated with a node (traverses the path from the root to the node)
-    std::string get_keyword(size_t node_id, size_t stop_id = ROOT);
-
     // Returns border nodes
     std::vector<Node> get_borders(size_t node_id);
-
-    // Returns all child nodes
-    std::vector<Node> get_children(size_t node_id);
-
-    // Return all leaf nodes
-    std::vector<Node> get_leaves(size_t node_id);
-
-    // Returns keyword matches for a given UTF-8 string
-    std::vector<std::string> get_keywords(const std::string& s);
 
     // Transition function, accepted a UTF-8 string
     Node trans_string(const std::string& s);

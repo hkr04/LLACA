@@ -6,21 +6,23 @@ from libcpp.string cimport string
 
 cdef extern from "stdint.h":
     ctypedef unsigned char uint8_t
+    ctypedef unsigned int uint32_t
     ctypedef unsigned long long uint64_t
     ctypedef size_t size_t
+    ctypedef uint8_t uint8_t
 
 cdef extern from "src/automaton.h" namespace "automaton":
     const size_t ROOT
 
     cdef cppclass Node "automaton::Node":
-        uint64_t end
-        uint64_t prefix_sum
-        double log_end
-        double log_prefix_sum
+        uint32_t end
+        uint64_t trie_sum
+        float log_end
+        float log_trie_sum
         size_t id
         size_t pre
         size_t fail
-        size_t length
+        uint8_t length
 
     cdef cppclass AutomatonImpl "automaton::Automaton":
         AutomatonImpl() except +
@@ -29,11 +31,9 @@ cdef extern from "src/automaton.h" namespace "automaton":
         void insert(string s, uint64_t freq) except +
         size_t word_count() except +
         Node get_node(size_t node_id) except +
-        string get_keyword(size_t node_id) except +
         Node trans_string(string s) except +
         Node trans_byte(uint8_t byte) except +
         vector[Node] get_borders(size_t node_id) except +
-        vector[string] get_keywords(string s) except +
         void reset(size_t new_state) except +
         void build(vector[string] dict_paths) except +
         void load_dict(string dict_path) except +
@@ -61,27 +61,24 @@ cdef class Automaton:
         cdef Node node = self.autom.get_node(node_id)
         node_dict = {
             'end': node.end,
-            'prefix_sum': node.prefix_sum,
+            'trie_sum': node.trie_sum,
             'log_end': node.log_end,
-            'log_prefix_sum': node.log_prefix_sum,
+            'log_trie_sum': node.log_trie_sum,
             'id': node.id,
             'pre': node.pre,
             'fail': node.fail,
             'length': node.length
         }
         return node_dict
-
-    def get_keyword(self, node_id) -> str:
-        return self.autom.get_keyword(node_id).decode('utf-8')
     
     def trans_string(self, s) -> dict:
         cdef string cpp_string = s.encode()
         cdef Node node = self.autom.trans_string(cpp_string)
         node_dict = {
             'end': node.end,
-            'prefix_sum': node.prefix_sum,
+            'trie_sum': node.trie_sum,
             'log_end': node.log_end,
-            'log_prefix_sum': node.log_prefix_sum,
+            'log_trie_sum': node.log_trie_sum,
             'id': node.id,
             'pre': node.pre,
             'fail': node.fail,
@@ -94,9 +91,9 @@ cdef class Automaton:
         cdef Node node = self.autom.trans_byte(cpp_byte)
         node_dict = {
             'end': node.end,
-            'prefix_sum': node.prefix_sum,
+            'trie_sum': node.trie_sum,
             'log_end': node.log_end,
-            'log_prefix_sum': node.log_prefix_sum,
+            'log_trie_sum': node.log_trie_sum,
             'id': node.id,
             'pre': node.pre,
             'fail': node.fail,
@@ -111,23 +108,15 @@ cdef class Automaton:
         for node in borders:
             node_dict = {
                 'end': node.end,
-                'prefix_sum': node.prefix_sum,
+                'trie_sum': node.trie_sum,
                 'log_end': node.log_end,
-                'log_prefix_sum': node.log_prefix_sum,
+                'log_trie_sum': node.log_trie_sum,
                 'id': node.id,
                 'pre': node.pre,
                 'fail': node.fail,
                 'length': node.length
             }
             res.append(node_dict)
-        return res
-
-    def get_keywords(self, s):
-        cdef string cpp_string = s.encode()
-        cdef vector[string] keywords = self.autom.get_keywords(cpp_string)
-        res = []
-        for keyword in keywords:
-            res.append(keyword.decode('utf-8'))
         return res
 
     def reset(self, new_state = ROOT):
@@ -148,5 +137,5 @@ cdef class Automaton:
 
     def cut(self, text):
         cdef vector[string] cpp_words = self.autom.cut(text.encode('utf-8'))
-        words = [word.decode() for word in cpp_words]
+        words = [word.decode('utf-8') for word in cpp_words]
         return words

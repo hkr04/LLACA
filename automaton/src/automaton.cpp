@@ -55,13 +55,12 @@ void Automaton::insert(const std::string& s, uint64_t freq) {
     }
 
     size_t u = ROOT;
-    size_t char_len = 0;
 
     for (uint8_t byte : s) {
         uint8_t half_byte = byte >> OFFSET; // Upper 4 bits
 
         if (!t[u].ch[half_byte] || get_node(t[u].ch[half_byte]).parent != u) {
-            t.emplace_back(++_node_count, u, half_byte);
+            t.emplace_back(++_node_count, u);
             t[u].ch[half_byte] = _node_count;
         }
 
@@ -70,33 +69,11 @@ void Automaton::insert(const std::string& s, uint64_t freq) {
         half_byte = byte & MASK; // Lower 4 bits
 
         if (!t[u].ch[half_byte] || get_node(t[u].ch[half_byte]).parent != u) {
-            t.emplace_back(++_node_count, u, half_byte);
+            t.emplace_back(++_node_count, u);
             t[u].ch[half_byte] = _node_count;
         }
 
         u = t[u].ch[half_byte]; // Move to the next state
-        
-        if (char_len == 0) {
-            if ((byte & 0x80) == 0x00) {
-                // 1-byte ASCII: 0xxxxxxx
-                char_len = 1;
-            } else if ((byte & 0xE0) == 0xC0) {
-                // 2-byte: 110xxxxx 10xxxxxx
-                char_len = 2;
-            } else if ((byte & 0xF0) == 0xE0) {
-                // 3-byte: 1110xxxx 10xxxxxx 10xxxxxx
-                char_len = 3;
-            } else if ((byte & 0xF8) == 0xF0) {
-                // 4-byte: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-                char_len = 4;
-            }
-        }
-
-        char_len--;
-
-        if (char_len == 0) {
-            t[u].end_utf8 += freq; // Increment the UTF-8 end count
-        }
     }
 
     if (t[u].end == 0) { // New keyword
@@ -107,17 +84,17 @@ void Automaton::insert(const std::string& s, uint64_t freq) {
     t[u].length = length;
 }
 
-void Automaton::get_prefix_sum() {
+void Automaton::get_trie_sum() {
     // Initialize prefix sum
     for (size_t i = 0; i <= _node_count; i++) {
-        t[i].prefix_sum = t[i].end;
+        t[i].trie_sum = t[i].end;
     }
 
     // Update the Trie from bottom to top
     for (size_t i = _node_count; i >= 0; i--) {
-        t[t[i].parent].prefix_sum += t[i].prefix_sum;
+        t[t[i].parent].trie_sum += t[i].trie_sum;
         t[i].log_end = log2(t[i].end);
-        t[i].log_prefix_sum = log2(t[i].prefix_sum);
+        t[i].log_trie_sum = log2(t[i].trie_sum);
         if (i == 0) break; // Avoid underflow
     }
 }
@@ -170,7 +147,7 @@ void Automaton::load_dict(const std::string& dict_path) {
 }
 
 void Automaton::build() {
-    get_prefix_sum();
+    get_trie_sum();
 
     for (size_t i = 1; i <= _node_count; i++) {
         size_t pre = t[i].pre;
@@ -184,7 +161,7 @@ void Automaton::build() {
 
     for (size_t i = 1; i <= _node_count; i++) {
         size_t pre = t[i].fail;
-        while (pre != ROOT && t[pre].end_utf8 == 0) { // Path compression, point to the last valid utf-8 state
+        while (pre != ROOT && t[pre].end == 0) { // Path compression, point to the last valid utf-8 state
             pre = t[pre].fail;
         }
         t[i].fail = pre;
@@ -247,104 +224,6 @@ std::vector<Node> Automaton::get_borders(size_t node_id) {
     return borders;
 }
 
-std::vector<Node> Automaton::get_children(size_t node_id) {
-    if (node_id >= t.size()) {
-        throw std::out_of_range("Node ID out of range");
-    }
-    std::vector<Node> children;
-    for (size_t i = 0; i < SIZE; i++) {
-        if (t[node_id].ch[i] != ROOT && t[t[node_id].ch[i]].parent == node_id) {
-            children.push_back(get_node(t[node_id].ch[i]));
-        }
-    }
-    return children;
-}
-
-std::vector<Node> Automaton::get_leaves(size_t node_id) {
-    if (node_id >= t.size()) {
-        throw std::out_of_range("Node ID out of range");
-    }
-
-    std::queue<size_t> q;
-    std::vector<Node> leaves;
-
-    q.push(node_id);
-
-    while (!q.empty()) {
-        size_t u = q.front();
-
-        q.pop();
-
-        bool is_leaf = true;
-
-        for (size_t i = 0; i < SIZE; i++) {
-            if (t[u].ch[i] != ROOT && t[t[u].ch[i]].parent == u) {
-                q.push(t[u].ch[i]);
-                is_leaf = false;
-            }
-        }
-
-        if (is_leaf) {
-            leaves.push_back(get_node(u));
-        }
-    }
-
-    return leaves;
-}
-
-std::string Automaton::get_keyword(size_t node_id, size_t stop_id) {
-    Node unode = get_node(node_id);
-
-    if (unode.id != ROOT && unode.end == 0) { // Find the last recognized state
-        unode = t[unode.pre];
-    }
-
-    std::string keyword;
-    bool is_lower = true;
-
-    while (unode.id != stop_id && unode.id != ROOT) {
-        if (is_lower) {
-            keyword += static_cast<char>(unode.data);
-        } else {
-            keyword.back() |= unode.data << OFFSET;
-        }
-        unode = t[unode.parent]; // Move to the parent node
-        is_lower = !is_lower; // Toggle case
-    }
-
-    std::reverse(keyword.begin(), keyword.end()); // Reverse the string to get the correct order
-
-    return keyword;
-}
-
-std::vector<std::string> Automaton::get_keywords(const std::string& s) {
-    size_t pre_state = _cur_state;
-
-    Node u;
-    std::vector<Node> borders;
-    std::vector<std::string> keywords;
-
-    reset(ROOT); // Reset to root state
-    for (uint8_t byte : s) {
-        u = trans_byte(byte);
-        borders = get_borders(u.id);
-        for (const auto& node : borders) {
-            if (node.end == 0) {
-                continue; // Skip nodes that are not end nodes
-            }
-            keywords.push_back(get_keyword(node.id));
-        }
-    }
-    reset(pre_state); // Restore previous state
-
-    // Remove duplicates
-    std::sort(keywords.begin(), keywords.end());
-    auto it = std::unique(keywords.begin(), keywords.end());
-    keywords.erase(it, keywords.end());
-
-    return keywords;
-}
-
 size_t Automaton::get_state() const {
     return _cur_state;
 }
@@ -381,9 +260,9 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
     }
 
     size_t n = text.size();
-    auto min_prob = -get_node(0).log_prefix_sum;
+    auto min_prob = -get_node(0).log_trie_sum;
 
-    std::vector<double> max_prob; // char
+    std::vector<float> max_prob; // char
     std::vector<int> utf8_start; // byte
     std::vector<int> pre; // char
 
@@ -469,7 +348,7 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
             }
             auto pre_node = get_node(border.pre);
             auto len_border = border.length;
-            auto log_cnt_pre = pre_node.log_prefix_sum;
+            auto log_cnt_pre = pre_node.log_trie_sum;
             auto log_cnt_border = border.log_end;
             auto prob = log_cnt_border - log_cnt_pre;
             if (prob > max_prob.back()) {

@@ -34,7 +34,7 @@ def is_symbol(char):
 def get_DAG(ac: Automaton, text: str, unigram=False, patterns=None):
     # initiate
     n = len(text)
-    min_prob = -ac.get_node(0)["log_prefix_sum"]
+    min_prob = -ac.get_node(0)["log_trie_sum"]
     edges = [[(i - 1, min_prob if not is_symbol(text[i]) else min_prob / 2)] for i in range(n)]
 
     # number
@@ -65,7 +65,7 @@ def get_DAG(ac: Automaton, text: str, unigram=False, patterns=None):
             len_border = border["length"]
             if len_border == 0:
                 break
-            log_cnt_pre = pre_node["log_prefix_sum"] if not unigram else -min_prob
+            log_cnt_pre = pre_node["log_trie_sum"] if not unigram else -min_prob
             log_cnt_border = border["log_end"]
             prob = log_cnt_border - log_cnt_pre
             edges[cur].append((cur - len_border, prob))
@@ -74,7 +74,7 @@ def get_DAG(ac: Automaton, text: str, unigram=False, patterns=None):
     
 def cut(ac: Automaton, text: str, delim=None, unigram=False, return_prob=False):
     edges = get_DAG(ac, text, unigram=unigram)
-    min_prob = -ac.get_node(0)["log_prefix_sum"]
+    min_prob = -ac.get_node(0)["log_trie_sum"]
     n = len(text)
     paths = {}
 
