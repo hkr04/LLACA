@@ -5,9 +5,19 @@
 int main() {
     automaton::Automaton automaton("../../data/dict/pku_dict.utf8");
 
-    std::string text = "12345dfasdgas武汉市长江大桥";
+    std::string text = "武汉市长江大桥";
 
     auto words = automaton.cut(text);
+
+    for (const auto& word : words) {
+        std::cout << word << " / ";
+    }
+
+    std::cout << std::endl;
+
+    words = automaton.cut(text, true); // cut all
+
+    std::cout << "================ cut all ================" << std::endl;
 
     for (const auto& word : words) {
         std::cout << word << " / ";

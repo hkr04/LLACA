@@ -102,7 +102,7 @@ public:
     void load_dict(const std::string& dict_path);
 
     // Cut a text into words
-    std::vector<std::string> cut(const std::string& text);
+    std::vector<std::string> cut(const std::string& text, bool cut_all = false);
 };
 
 }

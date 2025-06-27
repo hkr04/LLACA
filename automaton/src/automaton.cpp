@@ -264,7 +264,7 @@ void Automaton::reset(uint32_t new_state) {
     _cur_state = new_state;
 }
 
-std::vector<std::string> Automaton::cut(const std::string& text) {
+std::vector<std::string> Automaton::cut(const std::string& text, bool cut_all) {
     if (text.empty()) {
         return {};
     }
@@ -275,6 +275,7 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
     std::vector<float> max_prob; // char
     std::vector<int> utf8_start; // byte
     std::vector<int> pre; // char
+    std::vector<std::string> words;
 
     int i = 0, j = 0; // byte, char
 
@@ -284,6 +285,10 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
     
     // TODO: Handle full-width numbers and alphabets
     int num_start = -1, alpha_start = -1; // char, char
+
+    auto collect_word = [&words, &text](int utf8_start, int utf8_len) {
+        words.push_back(text.substr(utf8_start, utf8_len));
+    };
     
     while (i < n) {
         uint8_t byte = static_cast<uint8_t>(text[i]);
@@ -350,6 +355,10 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
             alpha_start = -1;
         }
 
+        if (cut_all) {
+            collect_word(utf8_start[pre.back() + 1], utf8_start.back() + char_len - utf8_start[pre.back() + 1]);
+        }
+
         auto borders = get_borders(_cur_state);
 
         for (const auto& border : borders) {
@@ -361,6 +370,9 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
             auto log_cnt_pre = pre_node.log_trie_sum;
             auto log_cnt_border = border.log_end;
             auto prob = log_cnt_border - log_cnt_pre;
+            if (cut_all && len_border != 1) {
+                collect_word(utf8_start[j - len_border + 1], utf8_start.back() + char_len - utf8_start[j - len_border + 1]);
+            }
             if (prob > max_prob.back()) {
                 max_prob.back() = prob;
                 pre.back() = j - len_border;
@@ -372,14 +384,16 @@ std::vector<std::string> Automaton::cut(const std::string& text) {
 
     _cur_state = pre_state; // Restore previous state
 
-    utf8_start.push_back(n);
+    if (cut_all) {
+        return words;
+    }
 
-    std::vector<std::string> words;
+    utf8_start.push_back(n);
 
     // Trace back to get the words
     j--;
     while (j >= 0) {
-        words.push_back(text.substr(utf8_start[pre[j] + 1], utf8_start[j + 1] - utf8_start[pre[j] + 1]));
+        collect_word(utf8_start[pre[j] + 1], utf8_start[j + 1] - utf8_start[pre[j] + 1]);
         j = pre[j];
     }
 
