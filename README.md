@@ -1,4 +1,4 @@
-# LLACA: Large Language Models-Inspired Aho-Corasick Automaton
+# LLACA: Large Language Model-Inspired Aho-Corasick Automaton
 
 ![LLACA](/assets/LLACA.png)
 
